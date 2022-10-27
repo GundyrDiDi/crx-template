@@ -1,8 +1,8 @@
 const storage = chrome.storage.local
 
-const store = {}
+const store:any = {}
 
-storage.get(store, res => {
+storage.get(store, (res:any) => {
   Object.keys(store).forEach(key => {
     if (!res[key]) {
       storage.set({ [key]: store[key] })
