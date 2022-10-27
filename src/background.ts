@@ -12,3 +12,7 @@
 // })
 
 // const dispatch = {}
+
+const storage = chrome.storage.local
+
+console.log(ttttttt.8888)
