@@ -1,6 +1,6 @@
 const storage = chrome.storage.local
 
-console.log(ttttttt)
+console.log(ttttttt.)
 // const store = {}
 
 // storage.get(store, res => {
