@@ -15,4 +15,4 @@
 
 const storage = chrome.storage.local
 
-console.log(ttttttt.8888)
+console.log(ttttttt.8888) 
