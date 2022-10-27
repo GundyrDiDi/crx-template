@@ -1,4 +1,4 @@
-import './service-worker/store'
+import './service-worker/store/aaa'
 import http from './service-worker/fetch'
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
