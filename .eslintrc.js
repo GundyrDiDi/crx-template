@@ -13,8 +13,7 @@ module.exports = {
     ecmaVersion: 2020
   },
   globals: {
-    chrome: true,
-    t: true
+    chrome: true
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
