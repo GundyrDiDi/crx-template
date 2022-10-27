@@ -1,0 +1,26 @@
+module.exports = {
+  // pages: {
+  //   popup: {
+  //     template: 'public/browser-extension.html',
+  //     entry: './src/popup/main.js',
+  //     title: 'Popup'
+  //   }
+  // },
+  productionSourceMap: false,
+  pluginOptions: {
+    browserExtension: {
+      componentOptions: {
+        background: {
+          entry: 'src/background.ts'
+        },
+        contentScripts: {
+          entries: {
+            'content-script': [
+              'src/content-scripts/content-script.ts'
+            ]
+          }
+        }
+      }
+    }
+  }
+}
