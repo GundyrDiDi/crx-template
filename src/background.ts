@@ -1,6 +1,5 @@
 import './service-worker/store'
 import http from './service-worker/fetch'
-import './a.js'
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   // 不能传输函数
