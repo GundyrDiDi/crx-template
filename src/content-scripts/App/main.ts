@@ -3,7 +3,7 @@ import $ from 'jquery'
 import App from './App.vue'
 import '@/assets/css/style.scss'
 
-export const createCrx = () => {
+export const createCrx = ():void => {
   const id = '__crx__'
   const el = $(`<div id="${id}"><div>`)
   $('body').append(el)
