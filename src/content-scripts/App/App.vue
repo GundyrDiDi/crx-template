@@ -1,6 +1,7 @@
 <template>
     <div>
         {{ a }}
+        <svg-icon></svg-icon>
     </div>
 </template>
 <script lang="ts" setup>

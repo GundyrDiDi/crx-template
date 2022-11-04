@@ -13,10 +13,8 @@ module.exports = {
     ecmaVersion: 2020,
     parser: '@typescript-eslint/parser'
   },
-  globals: {
-    chrome: true
-  },
   rules: {
+    '@typescript-eslint/no-unused-vars': 'off',
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
   }

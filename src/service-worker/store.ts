@@ -9,3 +9,18 @@ storage.get(store, (res:any) => {
     }
   })
 })
+
+const read = (key:string):Promise<any> =>
+  new Promise(resolve =>
+    storage.get([key], res => {
+      resolve(res[key])
+    })
+  )
+
+const write = (key:string, val:any) =>
+  Promise.resolve(() => read(key)).then(old => {
+    if (old === val) return val
+    storage.set({ [key]: val }, res => {
+      return val
+    })
+  })
