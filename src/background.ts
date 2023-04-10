@@ -1,7 +1,12 @@
 import './service-worker/store'
 import http from './service-worker/fetch'
 
-chrome.runtime.onMessage.addListener(function (request:any, sender:any, sendResponse:any) {
+interface Request{
+  cmd:string;
+  data?:any
+}
+
+chrome.runtime.onMessage.addListener(function (request:Request, sender:any, sendResponse:(res:any)=>void) {
   // 不能传输函数
   Promise.resolve()
     .then(() => dispatch[request.cmd](request, sender))
