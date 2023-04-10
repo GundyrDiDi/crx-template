@@ -5,7 +5,9 @@
   "description": "Extension Vue3 Template",
   "default_locale": "en",
   "permissions": [
-    "activeTab",
+    "tabs",
+    "storage",
+    "notifications",
     "<all_urls>",
     "*://*/*"
   ],

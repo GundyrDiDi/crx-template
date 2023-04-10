@@ -1,3 +1,6 @@
+// const PJT = process.argv.reduce((acc, v) => acc?acc:(v.match(/--prj=(.+)/) ?? [])[1], '')
+// process.env.VUE_APP_PJT=PJT
+
 module.exports = {
   // pages: {
   //   popup: {
@@ -16,11 +19,14 @@ module.exports = {
         contentScripts: {
           entries: {
             'content-script': [
-              'src/content-scripts/content-script.ts'
+              'src/content-scripts.ts'
             ]
           }
         }
       }
     }
+  },
+  chainWebpack: config => {
+    // console.log(PJT)
   }
 }
