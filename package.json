@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev:ckb": "vue-cli-service build --mode prod --prj=ckb --watch",
-    "dev:glt": "vue-cli-service build --mode development --prj=glt --watch",
-    "build:test": "vue-cli-service build --mode test",
-    "build:prod": "vue-cli-service build --mode prod",
+    "dev:ckb": "vue-cli-service build --mode test --prj=ckb --watch",
+    "dev:glt": "vue-cli-service build --mode test --prj=glt --watch",
+    "build:ckb": "vue-cli-service build --mode prod --prj=ckb",
+    "build:glt": "vue-cli-service build --mode prod --prj=glt",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -23,7 +23,8 @@
     "md5": "^2.3.0",
     "pinia": "^2.0.32",
     "universal-cookie": "^4.0.4",
-    "vue": "^3.2.45"
+    "vue": "^3.2.45",
+    "zip-a-folder": "^1.1.5"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.200",

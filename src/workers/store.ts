@@ -1,18 +1,20 @@
 // 最大支持5m
 const storage = chrome.storage.local
 
-type Store = {
-  userData: {
-    curShop?: string,
-    token?: string,
-    systemSource?: number
-  },
-  memberLevel: number,
-  imageCounts: number,
-  keywordCounts: number,
-  maxCounts: number,
-  langCode: string,
-  imgData: Record<string, string>
+declare global{
+  type Store = {
+    userData: {
+      curShop?: string,
+      token?: string,
+      systemSource?: number
+    },
+    memberLevel: number,
+    imageCounts: number,
+    keywordCounts: number,
+    maxCounts: number,
+    langCode: string,
+    imgData: Record<string, string>
+  }
 }
 
 const store: Store = {
@@ -42,7 +44,4 @@ export const read = <T extends keyof Store>(key: T): Promise<Store[T]> => new Pr
   })
 )
 
-export const write = <T extends keyof Store>(key: T, val: Store[T]): Promise<Store[T] | undefined> => read(key).then(old => {
-  if (old === val) return val
-  storage.set({ [key]: val })
-})
+export const write = <T extends keyof Store>(data: Record<T, Store[T]>):Promise<void> => storage.set(data)

@@ -1,5 +1,8 @@
-// const PJT = process.argv.reduce((acc, v) => acc?acc:(v.match(/--prj=(.+)/) ?? [])[1], '')
-// process.env.VUE_APP_PJT=PJT
+/* eslint-disable @typescript-eslint/no-var-requires */
+console.log(process.argv)
+const PJT = process.argv.reduce((acc, v) => acc || (v.match(/--prj=(.+)/) ?? [])[1], '') || 'ckb'
+process.env.VUE_APP_PJT = PJT
+const { v2, v3 } = require(`./src/projects/${PJT}/manifest.ts`)
 
 module.exports = {
   // pages: {
@@ -12,6 +15,15 @@ module.exports = {
   productionSourceMap: false,
   pluginOptions: {
     browserExtension: {
+      artifactsDir: './dist',
+      manifestTransformer: () => {
+        if (process.env.NODE_ENV === 'development') {
+          return v2
+        } else {
+          return v3
+        }
+      },
+      artifactFilename: () => `${PJT}_${v3.version}.zip`,
       componentOptions: {
         background: {
           entry: 'src/background.ts'
@@ -26,7 +38,24 @@ module.exports = {
       }
     }
   },
+  css: {
+    extract: false
+  },
   chainWebpack: config => {
     // console.log(PJT)
+    const rule = config.module.rule('fonts').use('url-loader')
+    rule.tap(options => {
+      return {
+        ...options,
+        limit: 100 * 1024 * 1024
+      }
+    })
+    const rule2 = config.module.rule('images').use('url-loader')
+    rule2.tap(options => {
+      return {
+        ...options,
+        limit: 100 * 1024 * 1024
+      }
+    })
   }
 }
