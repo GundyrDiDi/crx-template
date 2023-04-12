@@ -1,5 +1,5 @@
 import { read, write } from './store'
-import env from '../hooks/env'
+import env from '@/hooks/env'
 
 function serize (params?: obj, url = '') {
   if (!params) return url
@@ -44,47 +44,47 @@ const get = (url: string, params?: obj) => http(serize(params, url), {
   method: 'get'
 })
 
-const requests: obj<pfn> = {
+const requests: obj<fn> = {
   /**
-         * 翻译
-         * @param data
-         * @returns
-         */
+     * 翻译
+     * @param data
+     * @returns
+     */
   translate: data => post('/goods/translate/common', data),
   /**
-         * 获取用户信息
-         * @param data
-         * @returns
-         */
+     * 获取用户信息
+     * @param data
+     * @returns
+     */
   getUser: data => get('/customer/getCustomerDetails', data),
   /**
-         * 获取会员信息
-         * @returns
-         */
+     * 获取会员信息
+     * @returns
+     */
   getUserMember: () => get('/customer/getCustomerMembership'),
   /**
-         * 获取非会员搜索次数
-         * @returns
-         */
+     * 获取非会员搜索次数
+     * @returns
+     */
   getSearchTime: () => get('/customer/pluginSearchStatistics'),
   usedSearch: (type) => get('/customer/pluginSearchStatistics/update', { type }),
   /**
-         * 记录用户搜索
-         * @param data
-         * @returns
-         */
+     * 记录用户搜索
+     * @param data
+     * @returns
+     */
   logSrch: data => post('/goods/search/key/plugin/log', data),
   /**
-         *
-         * @param data
-         * @returns
-         */
+     *
+     * @param data
+     * @returns
+     */
   canBuy: data => post('/goods/search/isInBlacklist', data),
   /**
-         * 插件加购
-         * @param data
-         * @returns
-         */
+     * 插件加购
+     * @param data
+     * @returns
+     */
   addCart: data => post('/order/cart/add/pluginProduct', data)
 }
 

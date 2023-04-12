@@ -21,9 +21,6 @@ const dispatch: Record<string, pfn> = {
   // 读写
   async read (key) {
     const res = await read(key)
-    // if (key.includes('Counts')) {
-    //   console.log(key, res)
-    // }
     return res
   },
   async write (data) {
@@ -51,6 +48,12 @@ const dispatch: Record<string, pfn> = {
   async getImg (imgKey) {
     return read('imgData').then(res => res[imgKey] ?? new Error('获取图片失败'))
   },
+  // 更新用户信息
+  async updateUser () {
+    const res = await http<Store['userData']>('getUser')
+    write({ userData: res.data ? res.data : {} })
+    return res.data
+  },
   // 保存用户信息
   async setUser (data) {
     console.log(data)
@@ -76,12 +79,6 @@ const dispatch: Record<string, pfn> = {
       write({ imageCounts: imageSearchKey })
       write({ keywordCounts: searchKeywordKey })
     }
-  },
-  // 更新用户信息
-  async updateUser () {
-    const res = await http<Store['userData']>('getUser')
-    write({ userData: res.data ? res.data : {} })
-    return res.data
   },
   //
   async usedSearch (type) {

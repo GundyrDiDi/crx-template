@@ -11,6 +11,7 @@ import { defineProps } from 'vue'
 const importAll = (requireContext: any) => requireContext.keys().forEach(requireContext)
 importAll(require.context('@/assets/svg', true, /\.svg$/))
 defineProps(['name'])
+
 </script>
 
 <style lang="scss" scoped>
