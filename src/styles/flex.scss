@@ -1,8 +1,49 @@
-[sniff-ext]{
-  a{
-    color:red;
-  }
-  [flex]{
+[sniff-ext] {
+  [flex] {
     display: flex;
+
+    &[flex~="col"] {
+      flex-direction: column;
+    }
+
+    &[flex~="rev"] {
+      flex-direction: row-reverse;
+    }
+
+    &[flex~="colrev"] {
+      flex-direction: column-reverse;
+    }
+
+    &[flex~="cen"] {
+      justify-content: center;
+    }
+
+    &[flex~="bwn"] {
+      justify-content: space-between;
+    }
+
+    &[flex~="ard"] {
+      justify-content: space-around;
+    }
+
+    &[flex~="end"] {
+      justify-content: end;
+    }
+
+    &[flex~="colend"] {
+      align-items: end;
+    }
+
+    &[flex~="ter"] {
+      align-items: center;
+    }
+
+    &[flex~="wrap"] {
+      flex-wrap: wrap;
+    }
+
+    > [fx-1] {
+      flex: 1;
+    }
   }
 }

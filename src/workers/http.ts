@@ -1,5 +1,5 @@
 import { read, write } from './store'
-import env from '@/hooks/env'
+import { ENV } from '@/hooks/const'
 
 function serize (params?: obj, url = '') {
   if (!params) return url
@@ -8,7 +8,7 @@ function serize (params?: obj, url = '') {
   }, url + '?').slice(0, -1)
 }
 
-const baseUrl = env.VITE_URL
+const baseUrl = ENV.VITE_URL
 
 const http = async (url: string, options: RequestInit) => {
   const { token, curShop } = await read('userData')

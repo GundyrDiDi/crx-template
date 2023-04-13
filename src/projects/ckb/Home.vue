@@ -1,6 +1,6 @@
 <template >
-  <div sniff-ext>
-
+  <div>
+    <Attach />
   </div>
 </template>
 <script lang="ts" setup>

@@ -1,0 +1,198 @@
+@use "sass:map";
+@use "./flex.scss";
+
+$fontfamily: "PingFangSC-Semibold", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+
+$b1: #232323;
+$b2: #666;
+
+[sniff-ext] {
+  font-family: $fontfamily;
+
+  --b1: #{$b1};
+  --b2: #{$b2};
+
+  * {
+    box-sizing: border-box;
+  }
+
+  //
+  $position: (
+    rel: relative,
+    abs: absolute,
+    fix: fixed,
+    sti: sticky,
+  );
+
+  .wrap {
+    height: 100%;
+    width: 100%;
+  }
+
+  .cover {
+    @extend .wrap;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+  }
+
+  @each $k, $v in $position {
+    .#{$k} {
+      position: $v;
+    }
+    .#{$k}-wrap {
+      @extend .wrap;
+      @extend .#{$k};
+    }
+    .#{$k}-cover {
+      @extend .cover;
+      @extend .#{$k};
+    }
+  }
+
+  //
+  $direct: (
+    t: top,
+    r: right,
+    b: bottom,
+    l: left,
+  );
+
+  @mixin posit($map) {
+    @each $k, $v in $map {
+      #{map.get($direct,$k)}: $v;
+    }
+  }
+
+  $row: (
+    t: left,
+    c: center,
+    r: right,
+  );
+  $column: (
+    t: top,
+    m: middle,
+    b: bottom,
+  );
+  //
+  $content: (
+    m: margin,
+    p: padding,
+    bd-: border,
+    bd-r: border-radius,
+    o: opacity,
+    h: height,
+    w: width,
+  );
+  $ctx: m p;
+  $val: 5;
+  $vals: 5px;
+
+  @for $i from 1 to 11 {
+    @each $t in $ctx {
+      .#{$t}a-#{$i*$val} {
+        #{map.get($content,$t)}: $i * $vals;
+      }
+
+      .#{$t}h-#{$i*$val} {
+        #{map.get($content,$t)}-left: $i * $vals;
+        #{map.get($content,$t)}-right: $i * $vals;
+      }
+
+      .#{$t}v-#{$i*$val} {
+        #{map.get($content,$t)}-top: $i * $vals;
+        #{map.get($content,$t)}-bottom: $i * $vals;
+      }
+
+      @each $k, $d in $direct {
+        .#{$t}#{$k}-#{$i*$val} {
+          #{map.get($content,$t)}-#{$d}: $i * $vals;
+        }
+      }
+    }
+  }
+
+  // font
+  $font: (
+    ft: font-size,
+    fw: font-weight,
+  );
+
+  @for $i from 8 to 38 {
+    @if $i%2<1 {
+      [font~="size:#{$i}"] {
+        font-size: #{$i}px;
+      }
+
+      [font~="lineHeight=#{$i}"] {
+        line-height: #{$i}px;
+      }
+    }
+  }
+
+  @for $i from 2 to 10 {
+    [font~="weight=#{$i}"] {
+      font-weight: 100 * $i;
+    }
+  }
+
+  // text
+  $text: text-align, font-wrap, word-break, white-space;
+
+  @each $k, $v in $row {
+    [align="#{$k}"] {
+      text-align: $v;
+    }
+  }
+
+  [w-break],
+  [word="break-all"] {
+    word-break: break-all;
+  }
+
+  .line--1 {
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  @for $i from 2 to 4 {
+    .line--#{$i} {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: $i;
+      overflow: hidden;
+    }
+  }
+
+  // shadow
+  $shadow: box-shadow, text-shadow;
+  $hard: (
+    light: 1px 1px 2px rgba(0, 0, 0, 0.15),
+    normal: 1px 2px 3px rgba(0, 0, 0, 0.2),
+    dark: 1px 2px 3px rgba(0, 0, 0, 0.2),
+  );
+
+  @each $t in $shadow {
+    @each $h, $v in $hard {
+      [#{$t}="#{$h}"] {
+        #{$t}: $v;
+      }
+    }
+  }
+
+  // transform
+  $transform: translate, rotate, scale;
+  // status
+  $status: hover, active, focus, visited;
+
+  //
+  [of-hidden] {
+    overflow: hidden;
+  }
+
+  [cr-pointer] {
+    cursor: pointer;
+  }
+}

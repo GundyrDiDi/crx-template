@@ -1,12 +1,13 @@
 /**
  * 可以用于获取DOM元素，需要确保一定有值
  * @param fn
- * @param interval
+ * @param interval default 100
  * @returns
  */
 export const until = async <T>(fn: () => T | undefined | null, interval = 100): Promise<T> => {
-  const res = await fn()
-  if (res === null || res === undefined) {
+  // eslint版本过低导致
+  const res: any = await fn()
+  if (res === null || res === undefined || (typeof res === 'object' && 'length' in res && res.length === 0)) {
     return wait(interval).then(() => until(fn, interval))
   } else {
     return res
@@ -15,24 +16,21 @@ export const until = async <T>(fn: () => T | undefined | null, interval = 100): 
 
 /**
  *
- * @param fn
- * @param interval
+ * @param fn 返回真值则停止
+ * @param interval default 1000
  * @returns
  */
-export const startLoop = async <T extends ()=>boolean>(fn: T, interval = 1000) => {
+export const startLoop = async <T extends () => unknown>(fn: T, interval = 1000) => {
   return new Promise((resolve, reject) => {
     const t1 = () => setTimeout(async () => {
       try {
         const res = await fn()
-        if (!res) {
-          t1()
-        } else {
-          resolve(res)
-        }
+        res ? resolve(res) : t1()
       } catch (err) {
         reject(err)
       }
     }, interval)
+    t1()
   })
 }
 

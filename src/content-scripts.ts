@@ -1,39 +1,43 @@
 import createExt from '@/scripts/app'
 import { getImgData } from './hooks/useSrhImg'
-
-declare enum PLAT{
-  taobao='TM'
-}
+import connect from './scripts/post'
+import { PLATS } from './hooks/const'
 
 const url = location.href.replace(/\?.*$/, '')
-// 匹配平台
+/**
+ * @description 匹配平台
+ * @param url
+ * @returns
+ */
 const matchPlat = (url: string) => {
-  const match = /[^?]*\.(taobao\.|tmall\.|1688\.|amazon\.|aliexpress\.|rakuten\.|yahoo\.|pinduoduo\.|coupang\.|gmarket\.|11st\.|theckb\.)/
+  const match = new RegExp(`[^?]*\\.(${Object.values(PLATS).map(v => v + '\\.').join('|')})`)
   const word = (url.match(match) || [])[1] ?? ''
   return word.slice(0, -1)
 }
+/**
+ * @description 页面地址url中的标识
+ */
 const plat = matchPlat(url)
 
 // 是否商品详情页
 const matchProduct = (plat: string) => {
   const t = {
-    1688: 'detail',
-    taobao: 'item',
-    tmall: 'detail'
+    [PLATS.ali88]: 'detail',
+    [PLATS.taobao]: 'item',
+    [PLATS.tmall]: 'detail'
   }
-  return (plat in t) && url.includes(t[plat as '1688'])
+  return (plat in t) && url.includes(t[plat])
 }
 const isProduct = matchProduct(plat)
 
-getImgData()
-
 if (plat) {
   console.log(plat)
-  console.log(PLAT)
-  const connects = ['theckb']
+  const connects = [PLATS.theckb]
   if (connects.includes(plat)) {
-
+    connect(plat)
   } else {
     createExt(plat, isProduct)
   }
 }
+
+getImgData()

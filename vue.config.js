@@ -3,6 +3,7 @@ console.log(process.argv)
 const PJT = process.argv.reduce((acc, v) => acc || (v.match(/--prj=(.+)/) ?? [])[1], '') || 'ckb'
 process.env.VUE_APP_PJT = PJT
 const { v2, v3 } = require(`./src/projects/${PJT}/manifest.ts`)
+const path = require('path')
 
 module.exports = {
   // pages: {
@@ -42,7 +43,8 @@ module.exports = {
     extract: false
   },
   chainWebpack: config => {
-    // console.log(PJT)
+    config.resolve.alias.set('@p', path.join(__dirname, `src/projects/${PJT}`))
+    // 字体和图片文件
     const rule = config.module.rule('fonts').use('url-loader')
     rule.tap(options => {
       return {
@@ -57,5 +59,18 @@ module.exports = {
         limit: 100 * 1024 * 1024
       }
     })
+    const dir = path.join(__dirname, 'src/assets/icons')
+    config.module
+      .rule('svg-sprite')
+      .test(/\.svg$/)
+      .include.add(dir).end() // 包含 icons 目录
+      .use('svg-sprite-loader')
+      .loader('svg-sprite-loader')
+      .options({ extract: false }).end()
+    config.plugin('svg-sprite').use(
+      require('svg-sprite-loader/plugin'), [{ plainSprite: true }]
+    )
+    config.module.rule('svg').exclude.add(dir)
   }
+  //
 }

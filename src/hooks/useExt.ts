@@ -1,6 +1,17 @@
 import $ from 'jquery'
-import { wait, until } from './utils'
+import { wait, until, startLoop } from './utils'
+import { UnwrapRef, ref } from 'vue'
 
+export const connect = <T> (key:string, dft:T, interval = 1000) => {
+  const v = ref<T>(dft)
+  const fn = async () => {
+    const res = await sendMessage<T>('read', key)
+    v.value = (res ?? dft) as UnwrapRef<T>
+  }
+  fn()
+  startLoop(fn, interval)
+  return v
+}
 /**
  * content-script 与 background 通信
  * @param cmd

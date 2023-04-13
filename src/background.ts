@@ -25,8 +25,12 @@ chrome.runtime.onMessage.addListener((req: SData, sender, sendResponse) => {
 const dispatch: Record<string, pfn> = {
   // 读写
   async read (key) {
-    const res = await read(key)
-    return res
+    if (Array.isArray(key)) {
+      return Promise.all(key.map(v => read(v)))
+    } else {
+      const res = await read(key)
+      return res
+    }
   },
   async write (data) {
     await write(data)
@@ -61,7 +65,6 @@ const dispatch: Record<string, pfn> = {
   },
   // 保存用户信息
   async setUser (data) {
-    console.log(data)
     await write({ userData: data })
     this.canFreeSearch()
   },

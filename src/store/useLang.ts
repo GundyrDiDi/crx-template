@@ -1,12 +1,8 @@
 import { defineStore } from 'pinia'
-import { sendMessage } from '@/hooks/useExt'
-import { ref } from 'vue'
+import { connect } from '@/hooks/useExt'
 
 export default defineStore('lang', () => {
-  const langCode = ref('en')
-  //   startLoop(async () => {
-  //     langCode.value = (await sendMessage('read', 'langCode')) ?? 'en'
-  //   }, 1000)
+  const langCode = connect('langCode', 'en')
   return {
     langCode
   }
