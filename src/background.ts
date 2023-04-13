@@ -1,20 +1,25 @@
 import { read, write } from './workers/store'
 import http from './workers/http'
 
-chrome.runtime.onMessage.addListener(async (req: SData, sender) => {
+// 注意 V2版本的回调函数不可为异步函数，且必须返回true才会保持通信
+chrome.runtime.onMessage.addListener((req: SData, sender, sendResponse) => {
   const { cmd, data } = req
-  try {
-    const result = await dispatch[cmd](data).then(res => {
-      if (res instanceof Error) {
-        return Promise.reject(res)
-      } else {
-        return res
-      }
-    })
-    return { data: result, code: '0' }
-  } catch (err) {
-    return { req, err: err instanceof Error ? err.message : err }
+  const run = async () => {
+    try {
+      const result = await dispatch[cmd](data).then(res => {
+        if (res instanceof Error) {
+          return Promise.reject(res)
+        } else {
+          return { data: res }
+        }
+      })
+      sendResponse(result)
+    } catch (err) {
+      sendResponse({ req, err: err instanceof Error ? err.message : err })
+    }
   }
+  run()
+  return true
 })
 
 const dispatch: Record<string, pfn> = {
@@ -80,7 +85,7 @@ const dispatch: Record<string, pfn> = {
       write({ keywordCounts: searchKeywordKey })
     }
   },
-  //
+  // 减少次数
   async usedSearch (type) {
     const level = await read('memberLevel')
     if (level === 0) {
