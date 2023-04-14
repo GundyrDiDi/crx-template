@@ -8,7 +8,7 @@ function serize (params?: obj, url = '') {
   }, url + '?').slice(0, -1)
 }
 
-const baseUrl = ENV.VITE_URL
+const baseUrl = ENV.url
 
 const http = async (url: string, options: RequestInit) => {
   const { token, curShop } = await read('userData')

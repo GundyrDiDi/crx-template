@@ -6,7 +6,7 @@
 <script lang="ts" setup>
 import Home from '@p/Home.vue'
 import { ENV } from '@/hooks/const'
-const id = 'sniff-ext-' + ENV.VUE_APP_PJT
+const id = 'sniff-ext-' + ENV.pjt
 </script>
 <style lang="scss" scoped>
 .fix {

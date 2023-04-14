@@ -23,10 +23,11 @@ const left = ref(0)
 const top = ref(0)
 const root = getCurrentInstance()?.root
 //
-const handle = auth.before(auth.updateCount(() => {
-  // const url = plat.ruleUrl(cur.value)
-  // return readImg(url, '1688')
-}, 2))
+const handle = auth.searchFlow(2)
+// const handle = auth.isLogin(auth.updateCount(() => {
+//   // const url = plat.ruleUrl(cur.value)
+//   // return readImg(url, '1688')
+// }, 2))
 
 const toggle = (img?: { src: string, rect: { left: number, top: number } }) => {
   if (!img) return (cur.value = null)

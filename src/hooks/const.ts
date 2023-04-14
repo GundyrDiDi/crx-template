@@ -1,8 +1,15 @@
 /**
- * @prop VUE_APP_PJT
- * @prop VUE_APP_URL
+ * @prop url
+ * @prop host
+ * @prop pjt
+ * @prop path_vip
  */
-export const ENV = process.env
+export const ENV = new Proxy(process.env, {
+  get (target, prop:string) {
+    if (prop.toLowerCase() === prop) return target[`VUE_APP_${prop.toUpperCase()}`]
+    return target[prop]
+  }
+})
 
 /**
  * @description 值是url匹配到的名称标识

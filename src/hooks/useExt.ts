@@ -12,6 +12,7 @@ export const connect = <T> (key:string, dft:T, interval = 1000) => {
   startLoop(fn, interval)
   return v
 }
+
 /**
  * content-script 与 background 通信
  * @param cmd
@@ -68,6 +69,7 @@ export const getSrcWin = <T>(props: string, count = 10): Promise<T> => {
     })
   })
 }
+
 /**
  *
  * @param selector
