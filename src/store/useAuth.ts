@@ -72,7 +72,7 @@ export default defineStore('auth', () => {
 
   const logout = () => {
     userData.value = {}
-    sendMessage('write', { userData })
+    sendMessage('write', { userData: {} })
   }
 
   const hasAccess = (l: number) => {

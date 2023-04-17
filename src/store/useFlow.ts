@@ -7,11 +7,11 @@ export default defineStore('flow', () => {
     i:number
   }
 
-  type Next = () => unknown
+  type Next<T=unknown> = (res?:T) => T
 
-  type C<T extends unknown[]= []>=(ctx: Ctx, next: Next, ...rest: T) => unknown
+  type C<T extends unknown[]= unknown[]>=(ctx: Ctx, next: Next, ...rest: T) => unknown
 
-  type Task = string | { name: string, params: (() => unknown[]) | unknown[] }
+  type Task = string | { name: string, params: (() => unknown[]) | unknown[] } | C
 
   const fns: obj<fn> = {}
   /**
@@ -36,11 +36,16 @@ export default defineStore('flow', () => {
       }
       const next = () => {
         const task = tasks[++ctx.i]
+        let fn:C
         if (task) {
-          const fn = typeof task === 'string' ? fns[task] : fns[task.name]
           ctx.params = []
-          if (typeof task !== 'string') {
+          if (typeof task === 'string') {
+            fn = fns[task]
+          } else if (typeof task === 'function') {
+            fn = task
+          } else {
             ctx.params = Array.isArray(task.params) ? task.params : task.params()
+            fn = fns[task.name]
           }
           return fn(ctx, next, ...ctx.params)
         } else {
@@ -52,7 +57,7 @@ export default defineStore('flow', () => {
     flow.tasks = tasks
     flow.add = (...extra:Task[]) => {
       tasks.push(...extra)
-      return this
+      return flow
     }
     flow.copy = () => {
       return carry(...tasks)

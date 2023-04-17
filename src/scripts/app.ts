@@ -4,6 +4,7 @@ import App from '@/scripts/App.vue'
 import pinia from '@/plugins/pinia'
 import '@/styles/index.scss'
 import useAuth from '@/store/useAuth'
+import usePlat from '@/store/usePlat'
 // import 'ant-design-vue/dist/antd.min.css'
 // import 'ant-design-vue/es/message/style/index.css'
 import { i18n } from '@/i18n'
@@ -14,6 +15,6 @@ export default async (plat: string, isProduct: boolean) => {
   $('body').append(el)
   const app = createApp(App).use(pinia).use(i18n).use(resolver)
   await useAuth().getUser()
-  // await usePlat().init(plat, isProduct)
+  await usePlat().init(plat, isProduct)
   app.mount(el[0])
 }

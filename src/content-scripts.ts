@@ -30,14 +30,17 @@ const matchProduct = (plat: string) => {
 }
 const isProduct = matchProduct(plat)
 
-if (plat) {
-  console.log(plat)
-  const connects = [PLATS.theckb]
-  if (connects.includes(plat)) {
-    connect(plat)
-  } else {
-    createExt(plat, isProduct)
+// 等待页面原始先加载
+setTimeout(() => {
+  if (plat) {
+    console.log(plat)
+    const connects = [PLATS.theckb]
+    if (connects.includes(plat)) {
+      connect(plat)
+    } else {
+      createExt(plat, isProduct)
+    }
   }
-}
+}, 500)
 
 getImgData()

@@ -75,4 +75,4 @@ export const getSrcWin = <T>(props: string, count = 10): Promise<T> => {
  * @param selector
  * @returns
  */
-export const getAsyncDom = (selector:string) => until(() => $(selector))
+export const $async = (selector:string) => until(() => $(selector))

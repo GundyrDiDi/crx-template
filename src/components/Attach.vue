@@ -13,21 +13,22 @@ import $ from 'jquery'
 import { ref, onMounted, onUnmounted, getCurrentInstance } from 'vue'
 import { readImg } from '@/hooks/useSrhImg'
 // import usePlat from '@/store/usePlat'
+import useSearch from '@/store/useSearch'
 import useAuth from '@/store/useAuth'
 
 const auth = useAuth()
-// const plat = usePlat()
+const { parseUrl, matchImg } = useSearch()
 const cur = ref()
 const el = ref()
 const left = ref(0)
 const top = ref(0)
 const root = getCurrentInstance()?.root
 //
-const handle = auth.searchFlow(2)
-// const handle = auth.isLogin(auth.updateCount(() => {
-//   // const url = plat.ruleUrl(cur.value)
-//   // return readImg(url, '1688')
-// }, 2))
+const handle = auth.searchFlow(2).add((ctx, next) => {
+  const url = parseUrl(cur.value)
+  next()
+  return readImg(url, '1688')
+})
 
 const toggle = (img?: { src: string, rect: { left: number, top: number } }) => {
   if (!img) return (cur.value = null)
@@ -37,11 +38,11 @@ const toggle = (img?: { src: string, rect: { left: number, top: number } }) => {
 }
 
 const bind = (e: any) => {
-  // const [tar, x, y] = [e.target, e.clientX, e.clientY]
-  // if (root?.vnode.el?.contains(tar)) return
-  // if (el.value.contains(tar)) return
-  // const img = plat.matchImg(tar, x, y)
-  // toggle(img)
+  const [tar, x, y] = [e.target, e.clientX, e.clientY]
+  if (root?.vnode.el?.contains(tar)) return
+  if (el.value.contains(tar)) return
+  const img = matchImg(tar, x, y)
+  toggle(img)
 }
 onMounted(async () => {
   $('body').on('mouseover', bind)
