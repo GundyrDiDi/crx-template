@@ -7,19 +7,17 @@ export default defineStore('flow', () => {
     i:number
   }
 
-  type Next<T=unknown> = (res?:T) => T
+  type Next = <T>(res?:T) => unknown
 
-  type C<T extends unknown[]= unknown[]>=(ctx: Ctx, next: Next, ...rest: T) => unknown
+  type Task=(ctx: Ctx, next: Next, ...rest: any[]) => unknown
 
-  type Task = string | { name: string, params: (() => unknown[]) | unknown[] } | C
-
-  const fns: obj<fn> = {}
+  const fns: obj<Task> = {}
   /**
    *
    * @param key
    * @param fn
    */
-  const use = <T extends unknown[] =unknown[]>(key: string, fn: C<T>) => {
+  const define = (key: string, fn: Task) => {
     fns[key] = fn
   }
   /**
@@ -27,29 +25,25 @@ export default defineStore('flow', () => {
    * @param tasks
    * @returns
    */
-  const carry = <T>(...tasks: Task[]) => {
-    const flow = () => new Promise<T>((resolve) => {
+  const use = <R>(...tasks: (string|Task)[]) => {
+    const flow = <T extends unknown[]>(...rest:T) => new Promise<R>((resolve) => {
       const ctx: Ctx = {
-        params: [],
+        params: rest,
         res: undefined,
         i: -1
       }
-      const next = () => {
+      const next:Next = () => {
         const task = tasks[++ctx.i]
-        let fn:C
+        let fn:Task
         if (task) {
-          ctx.params = []
           if (typeof task === 'string') {
             fn = fns[task]
-          } else if (typeof task === 'function') {
-            fn = task
           } else {
-            ctx.params = Array.isArray(task.params) ? task.params : task.params()
-            fn = fns[task.name]
+            fn = task
           }
           return fn(ctx, next, ...ctx.params)
         } else {
-          resolve(ctx.res as T)
+          resolve(ctx.res as R)
         }
       }
       next()
@@ -60,13 +54,13 @@ export default defineStore('flow', () => {
       return flow
     }
     flow.copy = () => {
-      return carry(...tasks)
+      return use(...tasks)
     }
     return flow
   }
 
   return {
-    use,
-    carry
+    define,
+    use
   }
 })

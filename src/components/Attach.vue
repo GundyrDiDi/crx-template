@@ -3,7 +3,7 @@
     left: left + 'px',
     top: top + 'px',
   }">
-    <div class="sqire" flex="cen ter" @click="handle">
+    <div class="sqire" flex="cen ter" @click="handle(2)">
       <img src="@/assets/images/sqire.png" alt="">
     </div>
   </div>
@@ -24,7 +24,7 @@ const left = ref(0)
 const top = ref(0)
 const root = getCurrentInstance()?.root
 //
-const handle = auth.searchFlow(2).add((ctx, next) => {
+const handle = auth.searchFlow().add((ctx, next) => {
   const url = parseUrl(cur.value)
   next()
   return readImg(url, '1688')

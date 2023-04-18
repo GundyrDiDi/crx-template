@@ -23,7 +23,7 @@ export default defineStore('auth', () => {
   }
   startLoop(getUser, 2000)
 
-  flow.use('isLogin', (ctx, next) => {
+  flow.define('isLogin', (ctx, next) => {
     console.log(userData.value)
     if (userData.value.token) {
       next()
@@ -35,7 +35,7 @@ export default defineStore('auth', () => {
     }
   })
 
-  flow.use('updateCount', async (ctx, next, type: 1 | 2) => {
+  flow.define('updateCount', async (ctx, next, type: 1 | 2) => {
     if (level.value > 0) {
       return next()
     }
@@ -56,13 +56,11 @@ export default defineStore('auth', () => {
       }, 3000)
     }
   })
-
   /**
    *
-   * @param params 搜词：1；搜图：2
    * @returns
    */
-  const searchFlow = (params:1|2) => flow.carry('isLogin', { name: 'updateCount', params: [params] })
+  const searchFlow = () => flow.use('isLogin', 'updateCount')
 
   const joinMember = () => {
     const url = ENV.path_vip.replace('{sys}', userData.value.systemSource === 1 ? 'd2c' : 'b2b')
