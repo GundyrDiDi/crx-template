@@ -16,15 +16,16 @@ import { readImg } from '@/hooks/useSrhImg'
 import useSearch from '@/store/useSearch'
 import useAuth from '@/store/useAuth'
 
-const auth = useAuth()
+const { flow } = useAuth()
 const { parseUrl, matchImg } = useSearch()
 const cur = ref()
 const el = ref()
 const left = ref(0)
 const top = ref(0)
 const root = getCurrentInstance()?.root
+
 //
-const handle = auth.searchFlow().add((ctx, next) => {
+const handle = flow.useCount.add((ctx, next) => {
   const url = parseUrl(cur.value)
   next()
   return readImg(url, '1688')

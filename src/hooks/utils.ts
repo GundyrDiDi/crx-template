@@ -1,3 +1,4 @@
+import { ref, Ref } from 'vue'
 /**
  * 可以用于获取DOM元素，需要确保一定有值
  * @param fn
@@ -49,18 +50,18 @@ export const cancelTimes = (fn: fn, times = 2) => {
   }
 }
 
-// export const useLoading = <T extends pfn<Parameters<T>, R>, R = then<ReturnType<T>>>(fn: T, loading: Ref<boolean> = ref(false))
-//     : [pfn<Parameters<T>, R>, Ref<boolean>] => {
-//   return [
-//     async (...args) => {
-//       loading.value = true
-//       const result = await fn(...args)
-//       loading.value = false
-//       return result
-//     },
-//     loading
-//   ]
-// }
+export const useLoading = <T extends unknown[], R> (fn: pfn<T, R>, loading: Ref<boolean> = ref(false))
+    : [pfn<T, R>, Ref<boolean>] => {
+  return [
+    async (...args) => {
+      loading.value = true
+      const result = await fn(...args)
+      loading.value = false
+      return result
+    },
+    loading
+  ]
+}
 
 /**
  *
@@ -103,6 +104,11 @@ export const injectTask = <T extends unknown[], R>(fn: (...rest: T) => Promise<R
   return wrap
 }
 
+/**
+ * 异位词排列
+ * @param arr
+ * @returns
+ */
 export const anagrams = <T>(arr: T[]) => {
   if (arr.length <= 2) return arr.length === 1 ? [arr] : [arr, [arr[1], arr[0]]]
   return arr.reduce((acc, item, i) => {

@@ -12,6 +12,7 @@ export default defineStore('flow', () => {
   type Task=(ctx: Ctx, next: Next, ...rest: any[]) => unknown
 
   const fns: obj<Task> = {}
+
   /**
    *
    * @param key
@@ -25,7 +26,7 @@ export default defineStore('flow', () => {
    * @param tasks
    * @returns
    */
-  const use = <R>(...tasks: (string|Task)[]) => {
+  const use = <R>(...tasks: (Task|string)[]) => {
     const flow = <T extends unknown[]>(...rest:T) => new Promise<R>((resolve) => {
       const ctx: Ctx = {
         params: rest,
@@ -49,12 +50,15 @@ export default defineStore('flow', () => {
       next()
     })
     flow.tasks = tasks
-    flow.add = (...extra:Task[]) => {
+    flow.push = (...extra:(Task|string)[]) => {
       tasks.push(...extra)
       return flow
     }
+    flow.add = (...extra:(Task|string)[]) => {
+      return use(...tasks, ...extra)
+    }
     flow.copy = () => {
-      return use(...tasks)
+      //
     }
     return flow
   }

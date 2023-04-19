@@ -17,9 +17,10 @@ const setStatic = (style: string) => {
   const w = window.innerWidth
   const [g, x, y] = (style.match(/left:(-?[\d.]+)px;top:(-?[\d.]+)px/) ?? [0, 0, 0]).map(v => Number(v))
   if (x > w / 2) {
-    // console.log(el.value.getBoundingClientRect())
-    // console.log(w, x, w - x - 50)
-    staticStyle.value = `right:${Math.max(-25, w - x - 50/* 滚动条宽度 */)}px;top:${Math.max(0, y)}px`
+    const scrollWidth = document.body.clientHeight > window.innerHeight
+      ? navigator.userAgent.includes('Mac') ? 8
+        : window.innerWidth - document.body.clientWidth : 0
+    staticStyle.value = `right:${Math.max(-25, w - x - 50 - scrollWidth/* 滚动条宽度 */)}px;top:${Math.max(0, y)}px`
   } else {
     staticStyle.value = `left:${Math.max(-25, x)}px;top:${Math.max(0, y)}px`
   }

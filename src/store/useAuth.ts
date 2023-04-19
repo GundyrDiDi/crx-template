@@ -60,7 +60,8 @@ export default defineStore('auth', () => {
    *
    * @returns
    */
-  const searchFlow = () => flow.use('isLogin', 'updateCount')
+  const isLogin = flow.use('isLogin')
+  const useCount = isLogin.add('updateCount')
 
   const joinMember = () => {
     const url = ENV.path_vip.replace('{sys}', userData.value.systemSource === 1 ? 'd2c' : 'b2b')
@@ -84,7 +85,10 @@ export default defineStore('auth', () => {
     hasAccess,
     getUser,
     logout,
-    searchFlow,
+    flow: {
+      isLogin,
+      useCount
+    },
     joinMember
   }
 })

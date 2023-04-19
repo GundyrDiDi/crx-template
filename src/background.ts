@@ -35,6 +35,10 @@ const dispatch: Record<string, pfn> = {
   async write (data) {
     await write(data)
   },
+  // 请求
+  async http (data) {
+    return http(data[0], data[1])
+  },
   // 搜图
   async readImg (url) {
     return fetch(url).then(res => res.blob()).then(res => {
