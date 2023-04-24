@@ -63,9 +63,10 @@ const dispatch: Record<string, pfn> = {
   },
   // 更新用户信息
   async updateUser () {
+    write({ userData: {} })
     const res = await http<Store['userData']>('getUser')
-    write({ userData: res.data ? res.data : {} })
-    return res.data
+    write({ userData: res })
+    return res
   },
   // 保存用户信息
   async setUser (data) {
@@ -76,29 +77,24 @@ const dispatch: Record<string, pfn> = {
     const userData = await read('userData')
     if (!userData.token) return
     const res = await http<{ templateLevel: number }>('getUserMember')
-    if (res.data) {
-      const memberLevel = res.data.templateLevel
-      write({ memberLevel })
-      if (memberLevel < 1) {
-        await this.setSearchCount()
-      }
+    const memberLevel = res.templateLevel
+    write({ memberLevel })
+    if (memberLevel < 1) {
+      await this.setSearchCount()
     }
   },
   async setSearchCount () {
     const counts = await http<{ imageSearchKey: number, searchKeywordKey: number }>('getSearchTime')
-    if (counts.data) {
-      const { imageSearchKey, searchKeywordKey } = counts.data
-      write({ imageCounts: imageSearchKey })
-      write({ keywordCounts: searchKeywordKey })
-    }
+    const { imageSearchKey, searchKeywordKey } = counts
+    write({ imageCounts: imageSearchKey })
+    write({ keywordCounts: searchKeywordKey })
   },
   // 减少次数
   async usedSearch (type) {
     const level = await read('memberLevel')
     if (level === 0) {
-      await http('usedSearch', type).then(() => {
-        this.setSearchCount()
-      })
+      await http('usedSearch', type)
+      await this.setSearchCount()
     }
   },
   // 搜索翻译

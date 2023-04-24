@@ -2,6 +2,7 @@ import createExt from '@/scripts/app'
 import { getImgData } from './hooks/useSrhImg'
 import connect from './scripts/post'
 import { PLATS } from './hooks/const'
+// import { wait } from './hooks/utils'
 
 const url = location.href.replace(/\?.*$/, '')
 /**
@@ -30,8 +31,13 @@ const matchProduct = (plat: string) => {
 }
 const isProduct = matchProduct(plat)
 
+getImgData()
+
 // 等待页面原始先加载
-setTimeout(() => {
+new Promise((resolve) => {
+  setTimeout(resolve, 2500)
+  window.onload = resolve
+}).then(() => {
   if (plat) {
     console.log(plat)
     const connects = [PLATS.theckb]
@@ -41,6 +47,4 @@ setTimeout(() => {
       createExt(plat, isProduct)
     }
   }
-}, 500)
-
-getImgData()
+})

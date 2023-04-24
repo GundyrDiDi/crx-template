@@ -25,9 +25,8 @@ const top = ref(0)
 const root = getCurrentInstance()?.root
 
 //
-const handle = flow.useCount.add((ctx, next) => {
+const handle = flow.useCount.add(() => {
   const url = parseUrl(cur.value)
-  next()
   return readImg(url, '1688')
 })
 

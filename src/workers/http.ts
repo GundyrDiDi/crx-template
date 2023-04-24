@@ -31,7 +31,7 @@ const http = async (url: string, options: RequestInit) => {
       write({ userData: {} })
     }
     return code === '0'
-      ? res
+      ? res.data
       : Promise.reject(new Error(JSON.stringify({ url, code, msg: res?.msg ?? '接口报错' })))
   })
 }
@@ -88,6 +88,6 @@ const requests: obj<fn> = {
   addCart: data => post('/order/cart/add/pluginProduct', data)
 }
 
-export default <T>(key: string, data?: obj): Promise<{ data: T }> => {
+export default <T>(key: string, data?: obj): Promise<T> => {
   return requests[key](data)
 }

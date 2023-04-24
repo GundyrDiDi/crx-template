@@ -33,7 +33,7 @@ export default defineStore('flow', () => {
         res: undefined,
         i: -1
       }
-      const next:Next = () => {
+      const next = async () => {
         const task = tasks[++ctx.i]
         let fn:Task
         if (task) {
@@ -42,20 +42,18 @@ export default defineStore('flow', () => {
           } else {
             fn = task
           }
-          return fn(ctx, next, ...ctx.params)
-        } else {
-          resolve(ctx.res as R)
+          return await fn(ctx, next, ...ctx.params)
         }
       }
-      next()
+      next().then(() => resolve(ctx.res as R))
     })
     flow.tasks = tasks
     flow.push = (...extra:(Task|string)[]) => {
       tasks.push(...extra)
       return flow
     }
-    flow.add = (...extra:(Task|string)[]) => {
-      return use(...tasks, ...extra)
+    flow.add = <T=R>(...extra:(Task|string)[]) => {
+      return use<T>(...tasks, ...extra)
     }
     flow.copy = () => {
       //

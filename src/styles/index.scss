@@ -1,16 +1,25 @@
 @use "sass:map";
 @use "./flex.scss";
 
-$fontfamily: "PingFangSC-Semibold", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+$fontfamily: "PingFangSC", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
 
 $b1: #232323;
 $b2: #666;
+$g1: #008060;
+$g2: #e7f7f1;
+$g3: #ecf9f4;
+$g4: #d7ebe4;
+$g5: #ddf0e9;
 
 [sniff-ext] {
   font-family: $fontfamily;
-
   --b1: #{$b1};
   --b2: #{$b2};
+  --g1: #{$g1};
+  --g2: #{$g2};
+  --g3: #{$g3};
+  --g4: #{$g4};
+  --g5: #{$g5};
 
   * {
     box-sizing: border-box;

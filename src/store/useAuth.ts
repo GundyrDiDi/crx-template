@@ -23,10 +23,10 @@ export default defineStore('auth', () => {
   }
   startLoop(getUser, 2000)
 
-  flow.define('isLogin', (ctx, next) => {
+  flow.define('isLogin', async (ctx, next) => {
     console.log(userData.value)
     if (userData.value.token) {
-      next()
+      await next()
     } else {
       // msg.warn('请先登录直行便')
       setTimeout(() => {
@@ -37,23 +37,24 @@ export default defineStore('auth', () => {
 
   flow.define('updateCount', async (ctx, next, type: 1 | 2) => {
     if (level.value > 0) {
-      return next()
-    }
-    const count = {
-      1: keywordCounts.value,
-      2: imageCounts.value
-    }[type]
-    if (count > 0) {
-      const result = await next()
-      // 成功调用时，减一次
-      if (result) {
-        sendMessage('usedSearch', type)
-      }
+      await next()
     } else {
-      // msg.warn('今日使用次数已达到上限，请开通会员')
-      setTimeout(() => {
-        joinMember()
-      }, 3000)
+      const count = {
+        1: keywordCounts.value,
+        2: imageCounts.value
+      }[type]
+      if (count > 0) {
+        const result = await next()
+        // 成功调用时，减一次
+        if (result) {
+          sendMessage('usedSearch', type)
+        }
+      } else {
+        // msg.warn('今日使用次数已达到上限，请开通会员')
+        setTimeout(() => {
+          joinMember()
+        }, 3000)
+      }
     }
   })
   /**

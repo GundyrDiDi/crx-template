@@ -2,10 +2,11 @@ import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
 import $ from 'jquery'
 import { PLATS } from '@/hooks/const'
-import { until } from '@/hooks/utils'
+import { until, anagrams } from '@/hooks/utils'
 import { getSrcWin, $async, sendMessage } from '@/hooks/useExt'
 import { getUrlParams, historyParams } from '@/hooks/useUrl'
 import md5 from 'md5'
+import { tmGoodsApi } from '@/hooks/useApi'
 
 declare global {
   type Product = {
@@ -58,8 +59,8 @@ export default defineStore('product', () => {
    * 1688
    */
   const parse1688 = async () => {
-    const { skuModel, tempModel, images, orderParamModel } = await getSrcWin<any>('__GLOBAL_DATA')
-    product.productCode = tempModel.offerId
+    const { skuModel, tempModel, images, orderParamModel } = await getSrcWin<obj>('_GLOBALDATA')
+    product.productCode = `${pkey}-${tempModel.offerId}`
     product.productName = document.title
     product.productCate = tempModel.postCategoryId
     product.productMainImg = images ? images[0]?.fullPathImageURI : (await until(() => $('.detail-gallery-img:only-child').attr('src')))
@@ -74,9 +75,9 @@ export default defineStore('product', () => {
     const props = product.skuMap?.skuProps as obj[]
     // console.log(props)
     // console.log(map)
-    const scalePrice = product.skuMap?.skuPriceScale?.split('-').pop() ?? '0'
+    const scalePrice = product.skuMap?.skuPriceScale?.split('-').pop() || '0'
     if (map.length === 0) {
-      const decode = `${pkey}-${product.productCode}`
+      const decode = product.productCode
       skuMap[noSku] = {
         decode,
         productSku: md5(decode),
@@ -98,7 +99,7 @@ export default defineStore('product', () => {
       })
       Object.entries(map).forEach(([key, item]) => {
         const { skuId, discountPrice, price } = item
-        const decode = `${pkey}-${product.productCode}${skuId}`
+        const decode = `${product.productCode}${skuId}`
         const names = key.split('&gt;')
         skuMap[key] = {
           decode,
@@ -109,7 +110,9 @@ export default defineStore('product', () => {
         }
       })
     }
+    // console.log(skuMap)
   }
+  // 1688需要点击sku弹窗
   const trigger1688 = (close?: boolean) => {
     if (close) return $('.order-has-select-button').trigger('click')
     return new Promise((resolve) => {
@@ -126,26 +129,33 @@ export default defineStore('product', () => {
   const matchSku1688 = async () => {
     await trigger1688()
     const orderList:Orders = []
-    const trs = $('.selected-list-wrapper .selected-item-wrapper')
-    trs.each((i, tr) => {
-      const firstName = $(tr).find('.name').html()
-      const lis = $(tr).find('.children-item .children-wrapper')
-      lis.each((i, li) => {
-        const names = [firstName]
-        const name = $(li).find('span').attr('title')
-        if (name) {
-          names.push(name)
-        }
-        const skuKey = names.join('&gt;')
-        if (skuMap[skuKey]) {
-          orderList.push({
-            ...skuMap[skuKey],
-            orderQuantity: parseInt(($(li).find('span').text().match(/\((\d+)\)$/) ?? '')[1])
-          })
-        }
+    if (skuMap[noSku]) {
+      const num = parseInt(($('.total-count').html()?.match(/\d+/) || [''])[0])
+      orderList.push({
+        ...skuMap[noSku],
+        orderQuantity: num
       })
-    })
-    console.log(orderList)
+    } else {
+      const trs = $('.selected-list-wrapper .selected-item-wrapper')
+      trs.each((i, tr) => {
+        const firstName = $(tr).find('.name').html()
+        const lis = $(tr).find('.children-item .children-wrapper')
+        lis.each((i, li) => {
+          const names = [firstName]
+          const name = $(li).find('span').attr('title')
+          if (name) {
+            names.push(name)
+          }
+          const skuKey = names.join('&gt;')
+          if (skuMap[skuKey]) {
+            orderList.push({
+              ...skuMap[skuKey],
+              orderQuantity: parseInt(($(li).find('span').text().match(/\((\d+)\)$/) ?? '')[1])
+            })
+          }
+        })
+      })
+    }
     trigger1688(true)
     return orderList
   }
@@ -160,19 +170,108 @@ export default defineStore('product', () => {
     const img = await until(() => $('.tb-pic img').attr('src')?.replace(/_\d+x\d+.*?\..*$/, ''))
     product.productMainImg = img ?? ''
     product.shopName = await until(() => $('.shop-name-title[title]').attr('title') || $('.tb-shop-name [title]').attr('title'))
-    product.skuMap = (await getSrcWin<any>('Hub?.config?.config?.sku?.valItemInfo')).skuMap
+    product.skuMap = (await getSrcWin<obj>('Hub?.config?.config?.sku?.valItemInfo')).skuMap
     container.value = await $async('.tb-skin')
   }
-  const createSkuTb = () => {
-    //
+  const sliceImgUrl = (str?:string) => str?.replace(/_\d+x\d+.*?\..*$/, '')
+  const assemble = (props:(obj<string>[])[]) => {
+    return props.reduce<obj[]>((acc, v) => {
+      const res:obj[] = []
+      acc.forEach(v2 => {
+        v.forEach(v3 => {
+          res.push({
+            value: v2.value.concat(v3.value),
+            propName: v2.propName + ';' + v3.propName,
+            img: v2.img ?? v3.img
+          })
+        })
+      })
+      return res
+    }, [{ value: [], propName: '' }])
   }
-  const matchSkuTb = () => {
-    //
+  const assort = (t:obj[], map:obj<{skuId:string}>, temp:fn = v => v, keyback:fn = skuId => skuId) => {
+    // console.log(t)
+    // console.log(map)
+    t.forEach(v => {
+      const { value, propName, img } = v
+      const keys = anagrams(v.value)
+      keys.some(v => {
+        const key = temp(v.join(';'))
+        if (map[key]) {
+          const { skuId } = map[key]
+          const decode = `${product.productCode}${skuId}`
+          // 用value保证prop的顺序一致 从上到下
+          skuMap[keyback(skuId, value, propName)] = {
+            decode,
+            productSku: md5(decode),
+            productPropertiesName: propName,
+            productSkuImg: img,
+            productSellPrice: '0'
+          }
+          return true
+        }
+      })
+    })
+  }
+  const createSkuTb = () => {
+    const map = product.skuMap
+    if (!map) {
+      const decode = product.productCode + '0'
+      skuMap[noSku] = {
+        decode,
+        productSku: md5(decode),
+        productPropertiesName: '规格:默认',
+        productSkuImg: '',
+        productSellPrice: $('#J_PromoPriceNum').html() || '0'
+      }
+    } else {
+      const props: obj[][] = []
+      $('[data-property]').each((i, v) => {
+        const prop:obj[] = []
+        const name = $(v).attr('data-property')
+        $('li', v).each((i, v2) => {
+          const value = $(v2).attr('data-value')
+          const nameValue = $('a span', v2).html()
+          const a = ($('a', v2).css('background').match(/url\("(.*)"\)/) ?? [])[1]
+          prop.push({
+            value,
+            propName: `${name}:${nameValue}`,
+            img: sliceImgUrl(a)
+          })
+        })
+        props.push(prop)
+      })
+      const t = assemble(props)
+      assort(t, map, v => `;${v};`, (skuId, propValue) => propValue.join(';'))
+    }
+    console.log(skuMap)
+  }
+  const matchSkuTb = ():Orders => {
+    const num = parseInt($('#J_IptAmount').val() as string)
+    if (skuMap[noSku]) {
+      return [{
+        ...skuMap[noSku],
+        orderQuantity: num
+      }]
+    } else {
+      const selected = [...$('.J_Prop .tb-selected')]
+      const key = selected.map((v) => $(v).attr('data-value')).join(';')
+      if (skuMap[key]) {
+        return [{
+          ...skuMap[key],
+          productSellPrice: $('#J_PromoPriceNum').text(),
+          orderQuantity: num
+        }]
+      } else {
+        return []
+      }
+    }
   }
   /**
    * 天猫
    */
   const parseTm = async () => {
+    // location.href.match('itemo.html')
     product.version = location.href.includes('item.htm') ? 2 : 1
     const upt = product.version === 2
     product.productCode = historyParams.id as string
@@ -189,11 +288,65 @@ export default defineStore('product', () => {
     product.skuMap = {}
     container.value = await until(() => upt ? $('[class*="BasicContent--itemInfo"]') : $('.tb-sku .tb-action'))
   }
-  const createSkuTm = () => {
-    //
+  const createSkuTm = async () => {
+    const { props, skus } = await tmGoodsApi()
+    console.log(props, skus)
+    if (skus?.length === 0) {
+      const decode = product.productCode + '0'
+      skuMap[noSku] = {
+        decode,
+        productSku: md5(decode),
+        productPropertiesName: '规格:默认',
+        productSkuImg: '',
+        productSellPrice: $('[class*="Price--extraPriceText"]').html() || $('[class*="Price--priceText"]').html() || '0'
+      }
+    } else if (props && skus) {
+      const map = skus.reduce<obj<{skuId:string}>>((acc, { propPath, skuId }) => {
+        acc[propPath] = { skuId }
+        return acc
+      }, {})
+      const tmProps: obj[][] = []
+      props.forEach(v => {
+        const { pid, name, values } = v
+        const prop:obj[] = []
+        values.forEach((v:obj) => {
+          const { name: nameValue, vid, image } = v
+          prop.push({
+            value: pid + ':' + vid,
+            propName: `${name}:${nameValue}`,
+            img: image
+          })
+        })
+        tmProps.push(prop)
+      })
+      const t = assemble(tmProps)
+      assort(t, map)
+    } else {
+      // msg.error('读取商品sku失败')
+      canBuy.value = false
+    }
+    console.log(skuMap)
   }
   const matchSkuTm = () => {
-    //
+    const orderQuantity = parseInt($('input.countValueForPC').val() as string)
+    console.log(orderQuantity)
+    if (skuMap[noSku]) {
+      return [{
+        ...skuMap[noSku],
+        orderQuantity
+      }]
+    } else {
+      const key = getUrlParams().skuId as string
+      if (skuMap[key]) {
+        return [{
+          ...skuMap[key],
+          productSellPrice: $('[class*="Price--extraPriceText"]').html() || $('[class*="Price--priceText"]').html() || '0',
+          orderQuantity
+        }]
+      } else {
+        return []
+      }
+    }
   }
   const exec:obj<fn> = {
     parse: () => null,
@@ -258,7 +411,6 @@ export default defineStore('product', () => {
    */
   const addCart = async () => {
     const orderList: Orders = []
-    // 1688需要点击sku弹窗
     try {
       orderList.push(...await matchSku())
       if (!orderList.length) {
@@ -266,31 +418,31 @@ export default defineStore('product', () => {
         return
       }
     } catch (err) {
-      //
       console.log(err)
       // msg.error('添加商品失败')
       return
     }
-    const isNoQuantity = false
-    // const data = {
-    //     addCartSource: 1,
-    //     url: product.productUrl,
-    //     cartGroupName: product.shopName,
-    //     commonProductItemList: skuList.map(v => {
-    //         !v.orderQuantity && (isNoQuantity = true)
-    //         return {
-    //             ...v,
-    //             productCode: platKey.value + '-' + product.productCode,
-    //             productSkuImg: v.productSkuImg.replace(/_\d+x\d+.[^\.]+?$/, ''),
-    //             productTitle: product.productName,
-    //             productMainImg: product.productMainImg,
-    //             noAdditionalFlag: 0
-    //         }
-    //     })
-    // }
-    if (isNoQuantity) {
+    const isNull = orderList.some(v => !v.orderQuantity)
+    if (isNull) {
       // msg.error('商品数量不能为空')
-
+      return
+    }
+    console.log(orderList)
+    const data = {
+      addCartSource: 1,
+      url: product.productUrl,
+      cartGroupName: product.shopName
+      // commonProductItemList: skuList.map(v => {
+      //     !v.orderQuantity && (isNoQuantity = true)
+      //     return {
+      //         ...v,
+      //         productCode: platKey.value + '-' + product.productCode,
+      //         productSkuImg: v.productSkuImg.replace(/_\d+x\d+.[^\.]+?$/, ''),
+      //         productTitle: product.productName,
+      //         productMainImg: product.productMainImg,
+      //         noAdditionalFlag: 0
+      //     }
+      // })
     }
     // console.log(data)
     // return sendMessage('http', ['addCart', data]).then(res => {
