@@ -105,10 +105,9 @@ const dispatch: Record<string, pfn> = {
       text: word
     })
   }
-  //
-  // async getSku(data: any) {
-  //   fetch(data.url, {
-  //     headers: data.headers
-  //   })
-  // }
 }
+
+setInterval(
+  dispatch.canFreeSearch,
+  1000 * 10 * 60
+)

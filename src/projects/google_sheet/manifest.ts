@@ -1,4 +1,4 @@
-const common1 = {
+const common2 = {
   name: 'KAERUツール(THE直行便)',
   homepage_url: 'https://s.theckb.com/',
   description: 'THE直行便は、お客様がより便利で中国の1688、タオバオ、Tmall公式サイトで商品を選択できるように、該ブラウザ拡張機能を開発致しました。',
@@ -44,7 +44,7 @@ const common1 = {
 
 module.exports = {
   v2: {
-    ...common1,
+    ...common2,
     manifest_version: 2,
     version: '0.0.0',
     background: {
@@ -62,8 +62,8 @@ module.exports = {
     }
   },
   v3: {
-    ...common1,
-    version: '7.0.1',
+    ...common2,
+    version: '6.2.2',
     manifest_version: 3,
     background: {
       service_worker: 'js/background.js'

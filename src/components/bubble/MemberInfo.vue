@@ -1,5 +1,5 @@
 <template >
-  <div class="rel sniff-ext-member-panel" flex>
+  <div v-if="!level" class="rel sniff-ext-member-panel" flex>
     <div fx-1>
       <div flex="ter">
         <img src="@/assets/images/member-label.png" style="height:18px;margin-right:6px;" alt="">

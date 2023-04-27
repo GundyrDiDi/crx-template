@@ -1,3 +1,13 @@
+$b1: #232323;
+$b2: #666;
+$b3: #898989;
+$g1: #008060;
+$g2: #e7f7f1;
+$g3: #ecf9f4;
+$g4: #d7ebe4;
+$g5: #ddf0e9;
+$bl1: #007aff;
+
 body [sniff-ext] {
   .ant-tooltip {
     z-index: 11111111111111;
@@ -36,8 +46,8 @@ body [sniff-ext] {
 
   .ant-input:focus,
   .ant-input:hover {
-    background: #fafafa;
-    box-shadow: inset 0px 5px 8px 0px #efefef, inset 0px -1px 0px 0px #ffffff, inset 0px -3px 0px 0px #ffffff;
+    background: #fcfdfd;
+    box-shadow: inset 0px 5px 8px 0px #dfefeb, inset 0px -1px 0px 0px #ffffff;
   }
 
   .ant-input:hover {

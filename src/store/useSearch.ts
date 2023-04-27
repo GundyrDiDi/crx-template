@@ -70,7 +70,7 @@ export default defineStore('search', () => {
       url = url.slice(0, i)
     }
     // 速卖通、淘宝 图片规则
-    if (type === 'webp' && (name === 'aliexpress' || name === 'taobao')) {
+    if (type === 'webp') {
       url = url.replace(/_\.webp/, '')
     }
     return url

@@ -4,7 +4,8 @@
     top: top + 'px',
   }">
     <div class="sqire" flex="cen ter" @click="handle(2)">
-      <img src="@/assets/images/sqire.png" alt="">
+      <!-- <img src="@/assets/images/sqire.png" alt=""> -->
+      <svg-icon name="搜图"></svg-icon>
     </div>
   </div>
 </template>
@@ -27,6 +28,7 @@ const root = getCurrentInstance()?.root
 //
 const handle = useDebounceFn(flow.useCount.add(() => {
   const url = parseUrl(cur.value)
+  console.log(url)
   return readImg(url, '1688')
 }), 200)
 
@@ -57,22 +59,21 @@ onUnmounted(() => {
   z-index: 200000000;
   height: 40px;
   width: 40px;
-  background: #ffbb00;
-  color: #000;
-  border-radius: 3px;
-  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1);
-  transition: all 0.15s ease-in-out;
-  cursor: pointer;
 
   .sqire {
     height: 40px;
     width: 40px;
+    border-radius: 20px;
+    background: var(--g1) !important;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
     overflow: hidden;
+    box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1);
 
-    >img {
+    >* {
+      color: #fff;
       height: 70% !important;
       width: 70% !important;
-      background: #ffbb00 !important;
     }
   }
 }

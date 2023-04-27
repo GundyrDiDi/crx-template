@@ -2,10 +2,10 @@
   <Bubble v-if="plat.showBubble()" :can-drag="canDrag">
     <template #default="{ isDragging }">
       <div class="sniff-ext-bubble" flex="col colend">
-        <div ref="icon" flex="cen ter" cr-pointer @click="isDragging || (expand = !expand)">
-          <img class="sniff-ext-bubble-logo" src="@/assets/images/logo1.png" alt="" />
+        <div ref="icon" flex="cen ter" cr-pointer @click="isDragging || handleClick()">
+          <img class="sniff-ext-bubble-logo" shadow src="@/assets/images/logo1.png" alt="" />
         </div>
-        <div v-show="delayC" class="abs sniff-ext-bubble-box" of-hidden>
+        <div v-if="userData.token" v-show="delayC" class="abs sniff-ext-bubble-box" of-hidden>
           <div :class="{ expand: delayE }" class="sniff-ext-bubble-content" shadow of-hidden>
             <MemberInfo />
             <div class="sniff-ext-bubble-panel">
@@ -21,14 +21,20 @@
             </div>
           </div>
         </div>
+        <div v-else></div>
       </div>
     </template>
   </Bubble>
 </template>
 <script lang="ts" setup>
 import usePlat from '@/store/usePlat'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { aRef } from '@/hooks/useExt'
+import useAuth from '@/store/useAuth'
+
+const auth = useAuth()
+const userData = computed(() => auth.userData)
+const handleClick = auth.flow.isLogin.add(() => (expand.value = !expand.value))
 
 const expand = ref(true)
 const delayC = aRef(expand, 0, 300)
@@ -46,6 +52,7 @@ const canDrag = (e?: PointerEvent) => e?.target === icon.value
   &-logo {
     height: 58px;
     width: 58px;
+    border-radius: 50%;
     pointer-events: none;
   }
 

@@ -1,7 +1,8 @@
 <template >
   <div class="rel pb-10" flex="ter">
     <div class="sniff-ext-search-input" fx-1>
-      <a-input name="sniff-search-keyword" v-model="word" @keyup.enter="handleEnter" :placeholder="t('搜索商品名或店舗名')" />
+      <a-input name="sniff-search-keyword" v-model:value="word" @keyup.enter="handleEnter"
+        :placeholder="t('搜索商品名或店舗名')" />
       <div class="abs" cr-pointer @click="handleClick">
         <svg-icon name="搜索"></svg-icon>
       </div>
@@ -30,6 +31,12 @@ const handleClick = useDebounceFn(search)
 .ant-input {
   padding-right: 30px;
   background-color: transparent;
+
+  &:focus {
+    ~.abs {
+      color: var(--g1);
+    }
+  }
 
   ~.abs {
     top: 0;
