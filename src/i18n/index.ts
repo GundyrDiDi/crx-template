@@ -2,6 +2,13 @@ import useLang from '@/store/useLang'
 import { App } from 'vue'
 
 const message = {
+  读取商品sku失败: {
+
+  },
+  关闭: {
+    en: 'close',
+    ja: '閉じる'
+  },
   加入会员: {
     ja: '会員登録へ'
   },

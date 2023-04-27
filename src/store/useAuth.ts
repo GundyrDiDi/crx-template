@@ -5,6 +5,7 @@ import { Ref, ref } from 'vue'
 import { ENV } from '@/hooks/const'
 import { startLoop } from '@/hooks/utils'
 import useFlow from './useFlow'
+import { msg } from '@/plugins/ant'
 
 export default defineStore('auth', () => {
   const flow = useFlow()
@@ -28,7 +29,7 @@ export default defineStore('auth', () => {
     if (userData.value.token) {
       await next()
     } else {
-      // msg.warn('请先登录直行便')
+      msg.warn('请先登录直行便')
       setTimeout(() => {
         window.open(ENV.host)
       }, 2000)
@@ -50,7 +51,7 @@ export default defineStore('auth', () => {
           sendMessage('usedSearch', type)
         }
       } else {
-        // msg.warn('今日使用次数已达到上限，请开通会员')
+        msg.warn('今日使用次数已达到上限，请开通会员')
         setTimeout(() => {
           joinMember()
         }, 3000)
@@ -64,11 +65,11 @@ export default defineStore('auth', () => {
   const isLogin = flow.use('isLogin')
   const useCount = isLogin.add('updateCount')
 
-  const joinMember = () => {
+  const joinMember = isLogin.add(() => {
     const url = ENV.path_vip.replace('{sys}', userData.value.systemSource === 1 ? 'd2c' : 'b2b')
     console.log(url)
     window.open(url)
-  }
+  })
 
   const logout = () => {
     userData.value = {}

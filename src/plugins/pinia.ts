@@ -26,7 +26,7 @@ pinia.use(({ options, store }) => {
   if (options.debounce) {
     // 封装原有的action并替换
     return Object.keys(options.debounce).reduce<Partial<StoreActions<typeof store>>>((debouncedFns, a) => {
-      debouncedFns[a] = useDebounceFn(store[a], options.debounce![a])
+      const t = debouncedFns[a] = useDebounceFn(store[a], options.debounce![a])
       return debouncedFns
     }, {})
   }

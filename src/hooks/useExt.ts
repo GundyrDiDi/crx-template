@@ -1,6 +1,6 @@
 import $ from 'jquery'
 import { wait, until, startLoop } from './utils'
-import { UnwrapRef, ref } from 'vue'
+import { UnwrapRef, ref, Ref, watch } from 'vue'
 
 export const connect = <T> (key:string, dft:T, interval = 1000) => {
   const v = ref<T>(dft)
@@ -76,3 +76,25 @@ export const getSrcWin = <T>(props: string, count = 10): Promise<T> => {
  * @returns
  */
 export const $async = (selector:string) => until(() => $(selector))
+
+/**
+ *
+ * @param r
+ * @param delay1
+ * @param delay2
+ */
+export const aRef = (r:Ref, delay1:number, delay2?:number) => {
+  const a = ref(r.value)
+  watch(r, (v) => {
+    if (delay2 === undefined) {
+      delay1 ? setTimeout(() => {
+        a.value = v
+      }, delay1) : (a.value = v)
+    } else {
+      setTimeout(() => {
+        a.value = v
+      }, v ? delay1 : delay2)
+    }
+  })
+  return a
+}

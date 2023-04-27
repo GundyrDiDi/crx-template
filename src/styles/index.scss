@@ -1,25 +1,31 @@
 @use "sass:map";
 @use "./flex.scss";
+@use "./antd.scss";
+@use "./antd-cover.scss";
 
 $fontfamily: "PingFangSC", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
 
 $b1: #232323;
 $b2: #666;
+$b3: #898989;
 $g1: #008060;
 $g2: #e7f7f1;
 $g3: #ecf9f4;
 $g4: #d7ebe4;
 $g5: #ddf0e9;
+$bl1: #007aff;
 
 [sniff-ext] {
   font-family: $fontfamily;
   --b1: #{$b1};
   --b2: #{$b2};
+  --b3: #{$b3};
   --g1: #{$g1};
   --g2: #{$g2};
   --g3: #{$g3};
   --g4: #{$g4};
   --g5: #{$g5};
+  --bl1: #{$bl1};
 
   * {
     box-sizing: border-box;
@@ -197,6 +203,10 @@ $g5: #ddf0e9;
   $status: hover, active, focus, visited;
 
   //
+  [shadow] {
+    box-shadow: 0 0px 4px rgba(0, 0, 0, 0.2);
+  }
+
   [of-hidden] {
     overflow: hidden;
   }

@@ -1,20 +1,32 @@
-import { createApp } from 'vue'
 import $ from 'jquery'
+import { createApp } from 'vue'
 import App from '@/scripts/App.vue'
 import pinia from '@/plugins/pinia'
 import '@/styles/index.scss'
 import useAuth from '@/store/useAuth'
 import usePlat from '@/store/usePlat'
-// import 'ant-design-vue/dist/antd.min.css'
-// import 'ant-design-vue/es/message/style/index.css'
 import { i18n } from '@/i18n'
 import resolver from '@/components'
+import antd from 'ant-design-vue'
+
+declare module '@vue/runtime-core' {
+  export interface ComponentCustomProperties {
+      root: HTMLElement
+  }
+}
+
+declare global {
+  export interface Window {
+      __root: HTMLElement
+  }
+}
 
 export default async (plat: string, isProduct: boolean) => {
   const el = $('<div sniff-ext><div>')
   $('body').append(el)
-  const app = createApp(App).use(pinia).use(i18n).use(resolver)
+  const app = createApp(App).use(pinia).use(i18n).use(resolver).use(antd)
   await useAuth().getUser()
   await usePlat().init(plat, isProduct)
+  window.__root = app.config.globalProperties.root = el[0]
   app.mount(el[0])
 }

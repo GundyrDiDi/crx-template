@@ -1,0 +1,50 @@
+body [sniff-ext] {
+  .ant-tooltip {
+    z-index: 11111111111111;
+    max-width: 99999px;
+  }
+  .ant-tooltip-inner {
+    padding: 10px;
+  }
+
+  .ant-message {
+    z-index: calc(200000000 + 1);
+  }
+
+  input {
+    &:autofill {
+      background: #fff; // 支持火狐
+    }
+    // 支持chrome
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+      transition: background-color 50000s ease-in-out 0s;
+      -webkit-text-fill-color: #232323 !important;
+    }
+  }
+
+  .ant-input {
+    height: 30px;
+    border-radius: 15px;
+    border: 1px solid var(--b3);
+    transition: all 0.2s linear;
+    font-size: 12px;
+    caret-color: var(--g1);
+  }
+
+  .ant-input:focus,
+  .ant-input:hover {
+    background: #fafafa;
+    box-shadow: inset 0px 5px 8px 0px #efefef, inset 0px -1px 0px 0px #ffffff, inset 0px -3px 0px 0px #ffffff;
+  }
+
+  .ant-input:hover {
+    border: 1px solid var(--b3);
+  }
+
+  .ant-input:focus {
+    border-color: transparent;
+  }
+}

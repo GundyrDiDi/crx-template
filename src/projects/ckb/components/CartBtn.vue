@@ -61,9 +61,9 @@ const [wrap, loading] = useLoading(flow.isLogin.add(pdt.addCart))
 
     &.loading,
     &.disabled {
-      color: #ccc !important;
+      color: #eee !important;
       cursor: not-allowed !important;
-      border: 1px solid #ccc !important;
+      border: 1px solid #E8E8E8 !important;
 
       .sniff-ext-cart-icon {
         filter: grayscale(1);
@@ -71,7 +71,7 @@ const [wrap, loading] = useLoading(flow.isLogin.add(pdt.addCart))
       }
 
       >span {
-        color: #ccc;
+        color: #898989;
       }
     }
   }

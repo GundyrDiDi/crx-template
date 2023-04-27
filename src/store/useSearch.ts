@@ -4,10 +4,6 @@ import $ from 'jquery'
 import { sendMessage } from '@/hooks/useExt'
 import { encodeToGb2312HexList as encodeGbk } from 'gb2312-hex'
 
-declare global{
-
-}
-
 export default defineStore('search', () => {
   /**
    * 匹配图片元素

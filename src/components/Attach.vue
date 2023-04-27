@@ -12,9 +12,9 @@
 import $ from 'jquery'
 import { ref, onMounted, onUnmounted, getCurrentInstance } from 'vue'
 import { readImg } from '@/hooks/useSrhImg'
-// import usePlat from '@/store/usePlat'
 import useSearch from '@/store/useSearch'
 import useAuth from '@/store/useAuth'
+import { useDebounceFn } from '@vueuse/shared'
 
 const { flow } = useAuth()
 const { parseUrl, matchImg } = useSearch()
@@ -25,10 +25,10 @@ const top = ref(0)
 const root = getCurrentInstance()?.root
 
 //
-const handle = flow.useCount.add(() => {
+const handle = useDebounceFn(flow.useCount.add(() => {
   const url = parseUrl(cur.value)
   return readImg(url, '1688')
-})
+}), 200)
 
 const toggle = (img?: { src: string, rect: { left: number, top: number } }) => {
   if (!img) return (cur.value = null)

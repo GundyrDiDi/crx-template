@@ -7,6 +7,7 @@ import { getSrcWin, $async, sendMessage } from '@/hooks/useExt'
 import { getUrlParams, historyParams } from '@/hooks/useUrl'
 import md5 from 'md5'
 import { tmGoodsApi } from '@/hooks/useApi'
+import { msg } from '@/plugins/ant'
 
 declare global {
   type Product = {
@@ -162,18 +163,18 @@ export default defineStore('product', () => {
   /**
    * 淘宝
    */
+  const sliceImgUrl = (str?:string) => str?.replace(/_\d+x\d+.*?\..*$/, '')
   const parseTb = async () => {
-    product.productCode = historyParams.id as string
+    product.productCode = `${pkey}-${historyParams.id}`
     const cate = (((await until(() => $('script[exparams]').attr('exparams'))).match(/category=item(.+?)&/) ?? [])[1]).replace(/%.{2}/, '')
     product.productCate = cate
     product.productName = document.title.replace(/-淘宝网$/, '')
-    const img = await until(() => $('.tb-pic img').attr('src')?.replace(/_\d+x\d+.*?\..*$/, ''))
-    product.productMainImg = img ?? ''
+    const img = await until(() => $('.tb-pic img').attr('src'))
+    product.productMainImg = sliceImgUrl(img) ?? ''
     product.shopName = await until(() => $('.shop-name-title[title]').attr('title') || $('.tb-shop-name [title]').attr('title'))
     product.skuMap = (await getSrcWin<obj>('Hub?.config?.config?.sku?.valItemInfo')).skuMap
     container.value = await $async('.tb-skin')
   }
-  const sliceImgUrl = (str?:string) => str?.replace(/_\d+x\d+.*?\..*$/, '')
   const assemble = (props:(obj<string>[])[]) => {
     return props.reduce<obj[]>((acc, v) => {
       const res:obj[] = []
@@ -274,7 +275,7 @@ export default defineStore('product', () => {
     // location.href.match('itemo.html')
     product.version = location.href.includes('item.htm') ? 2 : 1
     const upt = product.version === 2
-    product.productCode = historyParams.id as string
+    product.productCode = `${pkey}-${historyParams.id}`
     product.productName = document.title.replace(/-tmall.*$/, '')
     const cate = (((await until(() => $('script[exparams]').attr('exparams'))).match(/category=item(.+?)&/) ?? [])[1]).replace(/%.{2}/, '')
     product.productCate = cate
@@ -322,14 +323,13 @@ export default defineStore('product', () => {
       const t = assemble(tmProps)
       assort(t, map)
     } else {
-      // msg.error('读取商品sku失败')
+      msg.error('读取商品sku失败')
       canBuy.value = false
     }
     console.log(skuMap)
   }
   const matchSkuTm = () => {
     const orderQuantity = parseInt($('input.countValueForPC').val() as string)
-    console.log(orderQuantity)
     if (skuMap[noSku]) {
       return [{
         ...skuMap[noSku],
@@ -414,40 +414,38 @@ export default defineStore('product', () => {
     try {
       orderList.push(...await matchSku())
       if (!orderList.length) {
-        // msg.error('未选择商品规格')
+        msg.error('未选择商品规格')
         return
       }
     } catch (err) {
       console.log(err)
-      // msg.error('添加商品失败')
+      msg.error('添加商品失败')
       return
     }
     const isNull = orderList.some(v => !v.orderQuantity)
     if (isNull) {
-      // msg.error('商品数量不能为空')
+      msg.error('商品数量不能为空')
       return
     }
     console.log(orderList)
     const data = {
       addCartSource: 1,
       url: product.productUrl,
-      cartGroupName: product.shopName
-      // commonProductItemList: skuList.map(v => {
-      //     !v.orderQuantity && (isNoQuantity = true)
-      //     return {
-      //         ...v,
-      //         productCode: platKey.value + '-' + product.productCode,
-      //         productSkuImg: v.productSkuImg.replace(/_\d+x\d+.[^\.]+?$/, ''),
-      //         productTitle: product.productName,
-      //         productMainImg: product.productMainImg,
-      //         noAdditionalFlag: 0
-      //     }
-      // })
+      cartGroupName: product.shopName,
+      commonProductItemList: orderList.map(v => {
+        return {
+          ...v,
+          productCode: product.productCode,
+          productTitle: product.productName,
+          productMainImg: sliceImgUrl(product.productMainImg),
+          noAdditionalFlag: 0
+        }
+      })
     }
-    // console.log(data)
-    // return sendMessage('http', ['addCart', data]).then(res => {
-    //     res ? msg.success('添加商品成功') : msg.error('添加商品失败')
-    // })
+    return sendMessage('http', ['addCart', data]).then(res => {
+      console.log(res)
+      res ? msg.success('添加商品成功') : msg.error('添加商品失败')
+    })
   }
   return {
     init,
