@@ -4,11 +4,11 @@ const common1 = {
   description: 'THE直行便は、お客様がより便利で中国の1688、タオバオ、Tmall公式サイトで商品を選択できるように、該ブラウザ拡張機能を開発致しました。',
   default_locale: 'ja',
   icons: {
-    16: 'icons/ckb.png',
-    32: 'icons/ckb.png',
-    48: 'icons/ckb.png',
-    96: 'icons/ckb.png',
-    128: 'icons/ckb.png'
+    16: 'icons/logo1.png',
+    32: 'icons/logo1.png',
+    48: 'icons/logo1.png',
+    96: 'icons/logo1.png',
+    128: 'icons/logo1.png'
   },
   permissions: [
     'tabs',
@@ -22,6 +22,11 @@ const common1 = {
         'https://*.taobao.com/*',
         'https://*.tmall.com/*',
         'https://*.amazon.co.jp/*',
+        'https://*.amazon.com/*',
+        'https://*.ebay.com/*',
+        'https://*.alibaba.com/*',
+        'https://*.lazada.co.th/*',
+        'https://shopee.co.th/*',
         'https://*.rakuten.co.jp/*',
         'https://*.aliexpress.com/*',
         'https://*.coupang.com/*',
@@ -57,7 +62,7 @@ module.exports = {
     browser_action: {
       default_title: 'THE直行便発注プラグイン',
       default_icon: {
-        48: 'icons/ckb.png'
+        48: 'icons/logo1.png'
       }
     }
   },

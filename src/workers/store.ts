@@ -1,6 +1,14 @@
+const app = chrome['app' as 'storage']
+
+declare global{
+  export interface c{
+    app:string
+  }
+}
 // 最大支持5m
 const storage = chrome.storage.local
 
+c
 declare global{
   type Store = {
     userData: {
