@@ -1,14 +1,9 @@
-const app = chrome['app' as 'storage']
-
-declare global{
-  export interface c{
-    app:string
-  }
-}
 // 最大支持5m
 const storage = chrome.storage.local
 
-c
+const mainfest = chrome.runtime.getManifest()
+const defaultLocale = mainfest.default_locale ?? 'zh'
+
 declare global{
   type Store = {
     userData: {
@@ -31,7 +26,7 @@ const store: Store = {
   imageCounts: 0,
   keywordCounts: 0,
   maxCounts: 0,
-  langCode: 'ja',
+  langCode: defaultLocale,
   imgData: {}
 }
 

@@ -2,7 +2,7 @@
 console.log(process.argv)
 const PJT = process.argv.reduce((acc, v) => acc || (v.match(/--prj=(.+)/) ?? [])[1], '') || 'ckb'
 process.env.VUE_APP_PJT = PJT
-const { v2, v3 } = require(`./src/projects/${PJT}/manifest.ts`)
+const { v2, v3 } = require(`./src/projects/${PJT}/manifest.js`)
 const path = require('path')
 
 module.exports = {

@@ -45,7 +45,7 @@ const dispatch: Record<string, pfn> = {
       return new Promise((resolve, reject) => {
         const fd = new FileReader()
         fd.onload = (e) => {
-          if (typeof e.target!.result === 'string') {
+          if (typeof e.target?.result === 'string') {
             const imgKey = Date.now().toString()
             write({ imgData: { [imgKey]: e.target!.result } })
             resolve(imgKey)
@@ -57,6 +57,11 @@ const dispatch: Record<string, pfn> = {
         fd.readAsDataURL(res)
       })
     }).catch(() => new Error('读取图片失败'))
+  },
+  async setImg (imgData) {
+    const imgKey = Date.now().toString()
+    await write({ imgData: { [imgKey]: imgData } })
+    return imgKey
   },
   async getImg (imgKey) {
     return read('imgData').then(res => res[imgKey] ?? new Error('获取图片失败'))

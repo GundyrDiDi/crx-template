@@ -29,3 +29,6 @@ export const PLATS = {
   '11st': '11st',
   theckb: 'theckb'
 }
+
+export const CKB = 'ckb'
+export const GLT = 'glt'

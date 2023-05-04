@@ -1,1 +1,38 @@
-{}
+{
+  "permissions": [
+    "tabs",
+    "storage",
+    "notifications"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.1688.com/*",
+        "https://*.taobao.com/*",
+        "https://*.tmall.com/*",
+        "https://*.amazon.co.jp/*",
+        "https://*.amazon.com/*",
+        "https://*.ebay.com/*",
+        "https://*.alibaba.com/*",
+        "https://*.lazada.co.th/*",
+        "https://shopee.co.th/*",
+        "https://*.rakuten.co.jp/*",
+        "https://*.r10s.jp/*",
+        "https://*.aliexpress.com/*",
+        "https://*.coupang.com/*",
+        "https://*.coupangcdn.com/*",
+        "https://*.gmarket.co.kr/*",
+        "https://*.11st.co.kr/*",
+        "https://s.theckb.com/*",
+        "https://cdn-test.theckb.com/*",
+        "https://*.png/*",
+        "https://*.jpg/*",
+        "https://*.bmp/*"
+      ],
+      "js": [
+        "js/content-script.js"
+      ],
+      "run_at": "document_end"
+    }
+  ]
+}

@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+const path = require('path')
+const fs = require('fs')
+const json = fs.readFileSync(path.join(path.resolve(), 'src/manifest.json'), 'utf8')
+
 const common1 = {
   name: 'KAERUツール(THE直行便)',
   homepage_url: 'https://s.theckb.com/',
@@ -10,41 +15,7 @@ const common1 = {
     96: 'icons/logo1.png',
     128: 'icons/logo1.png'
   },
-  permissions: [
-    'tabs',
-    'storage',
-    'notifications'
-  ],
-  content_scripts: [
-    {
-      matches: [
-        'https://*.1688.com/*',
-        'https://*.taobao.com/*',
-        'https://*.tmall.com/*',
-        'https://*.amazon.co.jp/*',
-        'https://*.amazon.com/*',
-        'https://*.ebay.com/*',
-        'https://*.alibaba.com/*',
-        'https://*.lazada.co.th/*',
-        'https://shopee.co.th/*',
-        'https://*.rakuten.co.jp/*',
-        'https://*.aliexpress.com/*',
-        'https://*.coupang.com/*',
-        'https://*.coupangcdn.com/*',
-        'https://*.gmarket.co.kr/*',
-        'https://*.11st.co.kr/*',
-        'https://s.theckb.com/*',
-        'https://cdn-test.theckb.com/*',
-        'https://*.png/*',
-        'https://*.jpg/*',
-        'https://*.bmp/*'
-      ],
-      js: [
-        'js/content-script.js'
-      ],
-      run_at: 'document_end'
-    }
-  ]
+  ...JSON.parse(json)
 }
 
 module.exports = {

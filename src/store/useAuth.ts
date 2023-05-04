@@ -1,14 +1,15 @@
 import { defineStore } from 'pinia'
 import { sendMessage } from '@/hooks/useExt'
-// import { msg } from "@/plugins/ant"
 import { Ref, ref } from 'vue'
-import { ENV } from '@/hooks/const'
+import { ENV, CKB } from '@/hooks/const'
 import { startLoop } from '@/hooks/utils'
 import useFlow from './useFlow'
 import { msg } from '@/plugins/ant'
+import useLogin from './useLogin'
 
 export default defineStore('auth', () => {
   const flow = useFlow()
+  const login = useLogin()
   const userData: Ref<obj> = ref({})
   const level = ref(0)
   const imageCounts = ref(0)
@@ -29,10 +30,14 @@ export default defineStore('auth', () => {
     if (userData.value.token) {
       await next()
     } else {
-      msg.warn('请先登录直行便')
-      setTimeout(() => {
-        window.open(ENV.host)
-      }, 2000)
+      if (ENV.pjt === CKB) {
+        msg.warn('请先登录直行便')
+        setTimeout(() => {
+          window.open(ENV.host)
+        }, 2000)
+      } else {
+        login.show()
+      }
     }
   })
 

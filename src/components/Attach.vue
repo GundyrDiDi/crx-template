@@ -15,7 +15,7 @@ import { ref, onMounted, onUnmounted, getCurrentInstance } from 'vue'
 import { readImg } from '@/hooks/useSrhImg'
 import useSearch from '@/store/useSearch'
 import useAuth from '@/store/useAuth'
-import { useDebounceFn } from '@vueuse/shared'
+import { useLoading } from '@/hooks/utils'
 
 const { flow } = useAuth()
 const { parseUrl, matchImg } = useSearch()
@@ -26,11 +26,15 @@ const top = ref(0)
 const root = getCurrentInstance()?.root
 
 //
-const handle = useDebounceFn(flow.useCount.add(() => {
+const [wrapReadImg, loading] = useLoading(readImg)
+
+const handle = flow.useCount.add(() => {
   const url = parseUrl(cur.value)
   console.log(url)
-  return readImg(url, '1688')
-}), 200)
+  if (!loading.value) {
+    return wrapReadImg(url, '1688')
+  }
+})
 
 const toggle = (img?: { src: string, rect: { left: number, top: number } }) => {
   if (!img) return (cur.value = null)
