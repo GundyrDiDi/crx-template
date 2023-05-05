@@ -11,7 +11,7 @@
               <img style="height:20px;" src="@/assets/images/theckb_logo.png" alt="">
               <LangBar />
               <SearchBar>
-                <sheet-config></sheet-config>
+                <SheetConfig />
               </SearchBar>
               <div style="height: 1px;background: #F4F5F8;margin:0"></div>
               <div align="c" style="margin:6px;">

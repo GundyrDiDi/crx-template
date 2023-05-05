@@ -1,5 +1,4 @@
-import type { App, AsyncComponentLoader } from 'vue'
-import { defineAsyncComponent } from 'vue'
+import type { App } from 'vue'
 // common
 import SvgIcon from './common/svg-icon.vue'
 import SniffBtn from './common/SniffBtn.vue'

@@ -330,8 +330,8 @@ const message = {
 }
 
 const create = (langs: string[]) => {
-  const locale: { [key in (typeof langs)[number]]: Record<string, any> } = langs.reduce((acc, v) => ({ [v]: {}, ...acc }), {})
-  Object.entries(message).forEach(([key, v]: [string, any]) => {
+  const locale: { [key in (typeof langs)[number]]: obj<string> } = langs.reduce((acc, v) => ({ [v]: {}, ...acc }), {})
+  Object.entries(message).forEach(([key, v]: [string, obj]) => {
     langs.forEach((lang) => {
       locale[lang][key] = v[lang] ?? key
     })

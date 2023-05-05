@@ -1,6 +1,6 @@
 <template >
   <div class="rel pb-10" flex="ter">
-    <div class="sniff-ext-search-input" fx-1>
+    <div class="sniff-ext-search-input rel" fx-1>
       <a-input name="sniff-search-keyword" v-model:value="word" @keyup.enter="handleEnter"
         :placeholder="t('搜索商品名或店舗名')" />
       <div class="abs" cr-pointer @click="handleClick">

@@ -76,11 +76,6 @@ export default defineStore('auth', () => {
     window.open(url)
   })
 
-  const logout = () => {
-    userData.value = {}
-    sendMessage('write', { userData: {} })
-  }
-
   const hasAccess = (l: number) => {
     return userData.value.token && level.value >= l
   }
@@ -91,7 +86,6 @@ export default defineStore('auth', () => {
     keywordCounts,
     hasAccess,
     getUser,
-    logout,
     flow: {
       isLogin,
       useCount

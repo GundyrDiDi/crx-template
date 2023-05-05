@@ -12,14 +12,14 @@ export default defineStore('search', () => {
    * @param y
    * @returns
    */
-  const matchImg = (tar: any, x: number, y: number) => {
+  const matchImg = (tar: obj, x: number, y: number) => {
     const name = usePlat().plat
     let t: {
       rect: { left: number, top: number, height: number, width: number },
       src: string
     } | undefined
     const parent = $(tar).parent()
-    let imgs: any[] = [...parent.find('img')]
+    let imgs: obj[] = [...parent.find('img')]
     if (name === 'rakuten') {
       imgs = [...parent.find('a.image'), ...imgs]
     }
