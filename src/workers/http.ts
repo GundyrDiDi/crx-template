@@ -32,7 +32,7 @@ const http = async (url: string, options: RequestInit) => {
     }
     return code === '0'
       ? res.data
-      : Promise.reject(new Error(JSON.stringify({ url, code, msg: res?.msg ?? '接口报错' })))
+      : Promise.reject(new Error(code))
   })
 }
 
@@ -46,10 +46,10 @@ const get = (url: string, params?: obj) => http(serize(params, url), {
 
 const requests: obj<fn> = {
   /**
-     * 翻译
-     * @param data
-     * @returns
-     */
+   * 翻译
+   * @param data
+   * @returns
+   */
   translate: data => post('/goods/translate/common', data),
   /**
      * 获取用户信息
@@ -75,16 +75,16 @@ const requests: obj<fn> = {
      */
   logSrch: data => post('/goods/search/key/plugin/log', data),
   /**
-     *
-     * @param data
-     * @returns
-     */
+   *
+   * @param data
+   * @returns
+   */
   canBuy: data => post('/goods/search/isInBlacklist', data),
   /**
-     * 插件加购
-     * @param data
-     * @returns
-     */
+   * 插件加购
+   * @param data
+   * @returns
+   */
   addCart: data => post('/order/cart/add/pluginProduct', data)
 }
 

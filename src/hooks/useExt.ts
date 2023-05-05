@@ -2,6 +2,13 @@ import $ from 'jquery'
 import { wait, until, startLoop } from './utils'
 import { UnwrapRef, ref, Ref, watch } from 'vue'
 
+/**
+ *
+ * @param key
+ * @param dft 默认值
+ * @param interval 间隔时间
+ * @returns
+ */
 export const connect = <T> (key:string, dft:T, interval = 1000) => {
   const v = ref<T>(dft)
   const fn = async () => {

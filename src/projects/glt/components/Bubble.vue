@@ -7,10 +7,12 @@
         </div>
         <div v-if="userData.token" v-show="delayC" class="abs sniff-ext-bubble-box" of-hidden>
           <div :class="{ expand: delayE }" class="sniff-ext-bubble-content" shadow of-hidden>
-            <div class="sniff-ext-bubble-panel">
+            <div class="sniff-ext-bubble-panel" of-auto>
               <img style="height:20px;" src="@/assets/images/theckb_logo.png" alt="">
               <LangBar />
-              <SearchBar />
+              <SearchBar>
+                <sheet-config></sheet-config>
+              </SearchBar>
               <div style="height: 1px;background: #F4F5F8;margin:0"></div>
               <div align="c" style="margin:6px;">
                 <span cr-pointer style="color:var(--bl1)" @click="expand = !expand">
@@ -31,6 +33,7 @@ import usePlat from '@/store/usePlat'
 import { ref, computed } from 'vue'
 import { aRef } from '@/hooks/useExt'
 import useAuth from '@/store/useAuth'
+import SheetConfig from './SheetConfig.vue'
 
 const auth = useAuth()
 const userData = computed(() => auth.userData)

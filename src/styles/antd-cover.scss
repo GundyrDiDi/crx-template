@@ -8,17 +8,22 @@ $g4: #d7ebe4;
 $g5: #ddf0e9;
 $bl1: #007aff;
 
+$z: 11111111111111;
+
 body [sniff-ext] {
-  .ant-tooltip {
-    z-index: 11111111111111;
+  .ant-tooltip,
+  .ant-popover {
+    z-index: $z;
     max-width: 99999px;
   }
   .ant-tooltip-inner {
     padding: 10px;
   }
-
+  .ant-popover-inner-content {
+    padding: 0px;
+  }
   .ant-message {
-    z-index: calc(200000000 + 1);
+    z-index: $z;
   }
 
   input {

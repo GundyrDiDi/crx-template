@@ -201,6 +201,16 @@ $bl1: #007aff;
   $transform: translate, rotate, scale;
   // status
   $status: hover, active, focus, visited;
+  // transition
+  $speed: slow normal fast;
+
+  [reverse] {
+    transform: rotate(180deg);
+  }
+
+  [fast] {
+    transition: transform 0.1s;
+  }
 
   //
   [shadow] {
@@ -211,7 +221,19 @@ $bl1: #007aff;
     overflow: hidden;
   }
 
+  [of-auto] {
+    overflow: auto;
+  }
+
   [cr-pointer] {
     cursor: pointer;
+  }
+
+  $handle-color: $bl1;
+  [cr-handle] {
+    @extend [cr-pointer];
+    &:hover {
+      color: $handle-color;
+    }
   }
 }

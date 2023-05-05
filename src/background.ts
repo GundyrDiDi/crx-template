@@ -104,6 +104,7 @@ const dispatch: Record<string, pfn> = {
   },
   // 搜索翻译
   async langToZh (word: string) {
+    http('logSrch', { word })
     return http('translate', {
       from: await read('langCode'),
       to: 'zh',
