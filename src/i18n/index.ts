@@ -329,6 +329,8 @@ const message = {
   $: {}
 }
 
+export type Messages = typeof message
+
 const create = (langs: string[]) => {
   const locale: { [key in (typeof langs)[number]]: obj<string> } = langs.reduce((acc, v) => ({ [v]: {}, ...acc }), {})
   Object.entries(message).forEach(([key, v]: [string, obj]) => {
@@ -339,7 +341,7 @@ const create = (langs: string[]) => {
   return locale
 }
 
-type T = (key: keyof typeof message) => string
+type T = (key: keyof Messages) => string
 
 declare module '@vue/runtime-core' {
     export interface ComponentCustomProperties {

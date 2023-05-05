@@ -25,6 +25,21 @@ body [sniff-ext] {
   .ant-message {
     z-index: $z;
   }
+  .ant-modal-root {
+    position: relative;
+    z-index: #{$z - 10};
+  }
+  .ant-modal-content {
+    border-radius: 10px;
+  }
+  .ant-modal-close-x {
+    width: 62px;
+    font-size: 22px;
+    line-height: 62px;
+  }
+  .ant-modal-body {
+    padding: 20px;
+  }
 
   input {
     &:autofill {

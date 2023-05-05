@@ -1,6 +1,12 @@
 import $ from 'jquery'
 import { wait, until, startLoop } from './utils'
 import { UnwrapRef, ref, Ref, watch } from 'vue'
+import { msg } from '@/plugins/ant'
+import type { Messages } from '@/i18n'
+
+const ErrorCode: obj<keyof Messages> = {
+  noMatch: 'sku'
+}
 
 /**
  *
@@ -9,7 +15,7 @@ import { UnwrapRef, ref, Ref, watch } from 'vue'
  * @param interval 间隔时间
  * @returns
  */
-export const connect = <T> (key:string, dft:T, interval = 1000) => {
+export const connect = <T>(key: string, dft: T, interval = 1000) => {
   const v = ref<T>(dft)
   const fn = async () => {
     const res = await sendMessage<T>('read', key)
@@ -17,6 +23,7 @@ export const connect = <T> (key:string, dft:T, interval = 1000) => {
   }
   fn()
   startLoop(fn, interval)
+  observe(key, fn)
   return v
 }
 
@@ -27,19 +34,48 @@ export const connect = <T> (key:string, dft:T, interval = 1000) => {
  * @returns void | data
  */
 export const sendMessage = <T>(cmd: string, data?: unknown) => {
-  const p = new Promise<T|void>((resolve, reject) => {
+  const p = new Promise<T | void>((resolve, reject) => {
     chrome.runtime.sendMessage({ cmd, data }, (res) => {
       if (res?.err) {
         console.error(res)
-        // sendMessage 应该返回错误还是返回undefined？
-        // reject(res)
+        const { req, err } = res
+        if (err in ErrorCode) {
+          msg.error(ErrorCode[err])
+        }
+        // todo: 上报错误监控
         resolve()
       } else {
+        if (cmd === 'write') {
+          Object.keys(data as obj).forEach(key => {
+            if (observer[key]) {
+              observer[key].forEach(v => v())
+            }
+          })
+        }
         resolve(res.data)
       }
     })
   })
   return p
+}
+
+const observer:obj<fn[]> = {}
+/**
+ *
+ * @param data
+ * @param callback
+ * @returns
+ */
+export const observe = (data:string, callback:fn) => {
+  if (!observer[data])observer[data] = []
+  observer[data].push(callback)
+  const index = observer[data].length - 1
+  return () => {
+    const t = observer[data]
+    if (t[index] === callback) {
+      t.splice(index, 1)
+    }
+  }
 }
 
 /**
@@ -82,7 +118,7 @@ export const getSrcWin = <T>(props: string, count = 10): Promise<T> => {
  * @param selector
  * @returns
  */
-export const $async = (selector:string) => until(() => $(selector))
+export const $async = (selector: string) => until(() => $(selector))
 
 /**
  *
@@ -90,7 +126,7 @@ export const $async = (selector:string) => until(() => $(selector))
  * @param delay1
  * @param delay2
  */
-export const aRef = (r:Ref, delay1:number, delay2?:number) => {
+export const aRef = (r: Ref, delay1: number, delay2?: number) => {
   const a = ref(r.value)
   watch(r, (v) => {
     if (delay2 === undefined) {

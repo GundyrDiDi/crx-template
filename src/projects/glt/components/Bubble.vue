@@ -9,7 +9,11 @@
           <div :class="{ expand: delayE }" class="sniff-ext-bubble-content" shadow of-hidden>
             <div class="sniff-ext-bubble-panel" of-auto>
               <img style="height:20px;" src="@/assets/images/theckb_logo.png" alt="">
-              <LangBar />
+              <LangBar>
+                <div style="color:var(--bl1)" cr-pointer @click="signout">
+                  {{ t('退出登录') }}
+                </div>
+              </LangBar>
               <SearchBar>
                 <SheetConfig />
               </SearchBar>
@@ -33,8 +37,10 @@ import usePlat from '@/store/usePlat'
 import { ref, computed } from 'vue'
 import { aRef } from '@/hooks/useExt'
 import useAuth from '@/store/useAuth'
+import useLogin from '@/store/useLogin'
 import SheetConfig from './SheetConfig.vue'
 
+const { signout } = useLogin()
 const auth = useAuth()
 const userData = computed(() => auth.userData)
 const handleClick = auth.flow.isLogin.add(() => (expand.value = !expand.value))

@@ -1,7 +1,8 @@
 import type { App } from 'vue'
 // common
-import SvgIcon from './common/svg-icon.vue'
+import SvgIcon from './common/SvgIcon.vue'
 import SniffBtn from './common/SniffBtn.vue'
+import Modal from './common/Modal.vue'
 // bussiness
 import Attach from './Attach.vue'
 import Bubble from './Bubble.vue'
@@ -15,6 +16,7 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Attach: typeof Attach,
     SvgIcon: typeof SvgIcon,
+    Modal: typeof Modal,
     SniffBtn: typeof SniffBtn,
     Bubble: typeof Bubble,
     LangBar: typeof LangBar,
@@ -26,6 +28,7 @@ declare module '@vue/runtime-core' {
 
 export default (app: App) => {
   app.component('SvgIcon', SvgIcon)
+  app.component('Modal', Modal)
   app.component('Attach', Attach)
   app.component('Bubble', Bubble)
   app.component('CartBtn', CartBtn)

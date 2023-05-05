@@ -1,4 +1,4 @@
-<template >
+<template>
   <div flex="bwn">
     <a-popover v-model:visible="visible" trigger="click" :getPopupContainer="() => root" placement="bottom">
       <div cr-pointer>
@@ -8,22 +8,19 @@
       </div>
       <template #content>
         <div class="pv-5">
-          <div class="ph-15 pv-5" v-for="v in Langs" :key="v.value" @click="changeLang(v.value); visible = false" cr-handle>
+          <div class="ph-15 pv-5" v-for="v in Langs" :key="v.value" @click="changeLang(v.value); visible = false"
+            cr-handle>
             {{ v.label }}
           </div>
         </div>
       </template>
     </a-popover>
-    <div style="color:var(--bl1)" cr-pointer @click="signout">
-      {{ t('退出登录') }}
-    </div>
+    <slot></slot>
   </div>
 </template>
 <script lang="ts" setup>
-import useLogin from '@/store/useLogin'
 import useLang from '@/store/useLang'
 import { computed, ref } from 'vue'
-const { signout } = useLogin()
 const { Langs, changeLang } = useLang()
 const lang = computed(() => useLang().get('langCode'))
 
