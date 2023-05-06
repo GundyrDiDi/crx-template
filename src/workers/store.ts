@@ -6,17 +6,36 @@ const defaultLocale = mainfest.default_locale ?? 'zh'
 
 declare global{
   type Store = {
-    userData: {
-      curShop?: string,
-      token?: string,
-      systemSource?: number
-    },
+    /** shopid token */
+    userData: Partial<{
+      curShop: string,
+      token: string,
+      systemSource: number,
+      customerId: string,
+      langcode: string,
+      googleUrl: string
+    }>,
+    /** 用户等级 */
     memberLevel: number,
+    /** 搜图次数 */
     imageCounts: number,
     keywordCounts: number,
+    /** 最大次数 */
     maxCounts: number,
+    /** 用户谷歌表绑定语言 */
+    googleSheetLangCode:string,
+    /** 语言 */
     langCode: string,
-    imgData: Record<string, string>
+    /** 图片base64储存 */
+    imgData: Record<string, string>,
+    /**  */
+    customerId: string,
+    /** 用户保存谷歌表 */
+    googleUrl: string,
+    /** 谷歌商品表 */
+    sheetSkus: obj[],
+    /** 谷歌表接口极慢，且同一个表不能并发请求，所以在background内声明一个值来控制所有页面的状态 */
+    waiting: boolean
   }
 }
 
@@ -26,8 +45,13 @@ const store: Store = {
   imageCounts: 0,
   keywordCounts: 0,
   maxCounts: 0,
+  googleSheetLangCode: defaultLocale,
   langCode: defaultLocale,
-  imgData: {}
+  imgData: {},
+  customerId: '',
+  googleUrl: '',
+  sheetSkus: [],
+  waiting: false
 }
 
 // 设置默认值

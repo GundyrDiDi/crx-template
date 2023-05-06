@@ -1,5 +1,5 @@
 <template>
-  <Bubble v-if="plat.showBubble()" :can-drag="canDrag">
+  <Bubble v-if="plat.showBubble()" :can-drag="canDrag" :ref="(v: any) => bubbleDom = v?.$el">
     <template #default="{ isDragging }">
       <div class="sniff-ext-bubble" flex="col colend">
         <div ref="icon" flex="cen ter" cr-pointer @click="isDragging || handleClick()">
@@ -39,6 +39,7 @@ import { aRef } from '@/hooks/useExt'
 import useAuth from '@/store/useAuth'
 import useLogin from '@/store/useLogin'
 import SheetConfig from './SheetConfig.vue'
+import { bubbleDom } from '@/hooks/useParabola'
 
 const { signout } = useLogin()
 const auth = useAuth()

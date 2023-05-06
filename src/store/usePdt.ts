@@ -444,7 +444,7 @@ export default defineStore('product', () => {
     }
     return sendMessage('http', ['addCart', data]).then(res => {
       console.log(res)
-      res ? msg.success('添加商品成功') : msg.error('添加商品失败')
+      res === null ? msg.success('添加商品成功') : msg.error('添加商品失败')
     })
   }
   return {
@@ -452,6 +452,7 @@ export default defineStore('product', () => {
     container,
     product,
     canBuy,
+    matchSku,
     addCart
   }
 })

@@ -15,7 +15,7 @@ const ErrorCode: obj<keyof Messages> = {
  * @param interval 间隔时间
  * @returns
  */
-export const connect = <T>(key: string, dft: T, interval = 1000) => {
+export const connect = <T>(key: string, dft: T, interval = 2000) => {
   const v = ref<T>(dft)
   const fn = async () => {
     const res = await sendMessage<T>('read', key)

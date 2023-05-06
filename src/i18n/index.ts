@@ -211,6 +211,9 @@ const message = {
     ko: 'Google 시트',
     th: 'the Google sheets'
   },
+  未绑定谷歌表: {
+
+  },
   绑定X后即可选购商品: {
     en: 'You can buy products after binding X',
     ko: 'X 연동후 상품을 선택할 수 있습니다.',

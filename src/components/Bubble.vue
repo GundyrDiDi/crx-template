@@ -27,6 +27,7 @@ const setStatic = (style: string) => {
   }
   return { x, y }
 }
+//
 const i = { x: -Infinity, y: 0 }
 const { style } = useDraggable(el, {
   initialValue: i,

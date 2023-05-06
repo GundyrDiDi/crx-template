@@ -1,6 +1,6 @@
 <template >
   <CartBtn class="sniff-ext-cart-btn" :id="'sniff-ext-' + plat">
-    <a href="#" @click.prevent="canBuy && wrap()" class="rel" :class="{ loading, disabled: !canBuy }">
+    <a href="#" @click.prevent="$event => canBuy && wrap($event)" class="rel" :class="{ loading, disabled: !canBuy }">
       <img v-show="canBuy" class="abs sniff-ext-cart-icon" src="@/assets/images/logo2.png" />
       <span>{{ canBuy ? t('我要代购') : t('不支持采购') }}</span>
     </a>
@@ -8,15 +8,15 @@
 </template>
 <script lang="ts" setup>
 import { useLoading } from '@/hooks/utils'
-import usePdt from '@/store/usePdt'
-import useAuth from '@/store/useAuth'
 import usePlat from '@/store/usePlat'
+import usePdt from '@/store/usePdt'
+import useSheet from '@/store/useSheet'
 
 const { plat } = usePlat()
-const { flow } = useAuth()
 const pdt = usePdt()
 const canBuy = pdt.canBuy
-const [wrap, loading] = useLoading(flow.isLogin.add(pdt.addCart))
+const { addSku } = useSheet()
+const [wrap, loading] = useLoading(addSku)
 </script>
 <style lang="scss" scoped>
 .sniff-ext-cart-btn {

@@ -3,6 +3,7 @@ import type { App } from 'vue'
 import SvgIcon from './common/SvgIcon.vue'
 import SniffBtn from './common/SniffBtn.vue'
 import Modal from './common/Modal.vue'
+import AntBtn from './common/AntBtn.vue'
 // bussiness
 import Attach from './Attach.vue'
 import Bubble from './Bubble.vue'
@@ -17,6 +18,7 @@ declare module '@vue/runtime-core' {
     Attach: typeof Attach,
     SvgIcon: typeof SvgIcon,
     Modal: typeof Modal,
+    AntBtn: typeof AntBtn,
     SniffBtn: typeof SniffBtn,
     Bubble: typeof Bubble,
     LangBar: typeof LangBar,
@@ -29,6 +31,7 @@ declare module '@vue/runtime-core' {
 export default (app: App) => {
   app.component('SvgIcon', SvgIcon)
   app.component('Modal', Modal)
+  app.component('AntBtn', AntBtn)
   app.component('Attach', Attach)
   app.component('Bubble', Bubble)
   app.component('CartBtn', CartBtn)

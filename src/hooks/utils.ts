@@ -86,7 +86,7 @@ export const wait = <T>(time = 1000, promise?: Promise<T>) => {
  * @returns
  */
 export const asyncTask = (): [Promise<unknown>, (v: unknown) => void] => {
-  let finish!: (v: unknown) => void
+  let finish!: (v: unknown) => unknown
   const task = new Promise(resolve => {
     finish = resolve
   })
