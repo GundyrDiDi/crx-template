@@ -26,9 +26,6 @@ export const bezier = (points:(number[])[], num:number) => {
   return res
 }
 
-export const getStartEnd = () => {
-  //
-}
 /**
  * 计算控制点，生成经过点
  * @param v
@@ -59,27 +56,41 @@ export const transform = ref('')
  * 悬浮气泡位置
  */
 export const bubbleDom = ref()
+/**
+ * 气泡弹跳动画
+ */
+export const droping = ref(false)
 
 const step = 60
 
-export const throwed = (src:string) => {
+/**
+ * 加购动画
+ * @param src sku图片
+ * @param start 起点
+ * @returns
+ */
+export const throwed = (src:string, start:number[]) => {
   console.log(bubbleDom)
-  // parabola.value = src
-  // const { start } = points
-  // const dots = calcPoint(points, step)
-  // transform.value = `translate(${start[0]}px,${start[1]}px)`
-  // let i = 0
-  // const [task, finish] = asyncTask()
-  // const timer = setInterval(() => {
-  //   if (i === step) {
-  //     clearInterval(timer)
-  //     parabola.value = ''
-  //     finish(true)
-  //     //
-  //   } else {
-  //     transform.value = `translate(${dots[i][0]}px,${dots[i++][1]}px)`
-  //   }
-  // }, 1000 / step)
-
-  // return task
+  const { left, top, height, width } = bubbleDom.value.getBoundingClientRect()
+  points.start = start
+  points.end = [left + width / 2, top + height / 2]
+  parabola.value = src
+  const dots = calcPoint(points, step)
+  transform.value = `translate(${start[0]}px,${start[1]}px)`
+  let i = 0
+  const [task, finish] = asyncTask()
+  const timer = setInterval(() => {
+    if (i === step) {
+      clearInterval(timer)
+      parabola.value = ''
+      droping.value = false
+      finish(true)
+    } else {
+      transform.value = `translate(${dots[i][0]}px,${dots[i++][1]}px)`
+    }
+  }, 1000 / step)
+  setTimeout(() => {
+    droping.value = true
+  }, 900)
+  return task
 }

@@ -4,8 +4,36 @@ import { UnwrapRef, ref, Ref, watch } from 'vue'
 import { msg } from '@/plugins/ant'
 import type { Messages } from '@/i18n'
 
+/** 后端返回错误代码，前端显示toast */
 const ErrorCode: obj<keyof Messages> = {
   noMatch: 'sku'
+}
+
+/**
+ * content-script 与 background 通信
+ * @param cmd
+ * @param data
+ * @returns void | data
+ */
+export const sendMessage = <T>(cmd: string, data?: unknown) => {
+  const p = new Promise<T | void>((resolve, reject) => {
+    chrome.runtime.sendMessage({ cmd, data }, (res) => {
+      if (res?.err) {
+        console.error(res)
+        const { req, err } = res
+        if (err in ErrorCode) {
+          msg.error(ErrorCode[err])
+        }
+        // todo: 上报错误监控
+        resolve()
+      } else {
+        // 触发observer
+        mutate(cmd, res.data)
+        resolve(res.data)
+      }
+    })
+  })
+  return p
 }
 
 /**
@@ -27,38 +55,6 @@ export const connect = <T>(key: string, dft: T, interval = 2000) => {
   return v
 }
 
-/**
- * content-script 与 background 通信
- * @param cmd
- * @param data
- * @returns void | data
- */
-export const sendMessage = <T>(cmd: string, data?: unknown) => {
-  const p = new Promise<T | void>((resolve, reject) => {
-    chrome.runtime.sendMessage({ cmd, data }, (res) => {
-      if (res?.err) {
-        console.error(res)
-        const { req, err } = res
-        if (err in ErrorCode) {
-          msg.error(ErrorCode[err])
-        }
-        // todo: 上报错误监控
-        resolve()
-      } else {
-        if (cmd === 'write') {
-          Object.keys(data as obj).forEach(key => {
-            if (observer[key]) {
-              observer[key].forEach(v => v())
-            }
-          })
-        }
-        resolve(res.data)
-      }
-    })
-  })
-  return p
-}
-
 const observer:obj<fn[]> = {}
 /**
  *
@@ -75,6 +71,15 @@ export const observe = (data:string, callback:fn) => {
     if (t[index] === callback) {
       t.splice(index, 1)
     }
+  }
+}
+export const mutate = (cmd:string, data?:unknown) => {
+  if (cmd === 'write') {
+    Object.keys(data as obj).forEach(key => {
+      if (observer[key]) {
+        observer[key].forEach(v => v())
+      }
+    })
   }
 }
 

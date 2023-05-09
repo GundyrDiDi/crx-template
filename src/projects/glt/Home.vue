@@ -1,5 +1,6 @@
 <template >
   <div>
+    <Parabola />
     <Attach />
     <CkbBubble />
     <CkbCartBtn />

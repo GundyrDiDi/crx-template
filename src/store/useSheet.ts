@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+// import { ref } from 'vue'
 import usePdt from './usePdt'
 import { connect, sendMessage } from '@/hooks/useExt'
-import { throwed, points } from '@/hooks/useParabola'
+import { throwed } from '@/hooks/useParabola'
 import { msg } from '@/plugins/ant'
 import useAuth from './useAuth'
 
@@ -19,7 +19,7 @@ export default defineStore('sheet', () => {
       return
     }
     const customerId = await sendMessage('read', 'customerId')
-    const res = await sendMessage('http', ['setGoogleSheet', { googleUrl, customerId }])
+    const res = true // await sendMessage('http', ['setGoogleSheet', { googleUrl, customerId }])
     console.log(res)
     if (res) {
       await sendMessage('write', { googleUrl })
@@ -37,24 +37,29 @@ export default defineStore('sheet', () => {
     if (!googleUrl.value) {
       msg.error('未绑定谷歌表')
     } else {
+      await next()
       // sendMessage('updateSheet')
     }
-    await next()
   })
 
   const { matchSku, product } = usePdt()
 
-  const addSku = hasUrl.add(async (ctx, next, e:MouseEvent) => {
-    const skus = matchSku()
+  const addSku = hasUrl.add(async (ctx, next, e: MouseEvent) => {
+    const skus = matchSku().map((v:Orders[0]) => {
+      return {
+        time: Date.now(),
+        photoUrl: v.productSkuImg || product.productMainImg,
+        productName: product.productName,
+        productUrl: product.productUrl,
+        productSpecification: v.productPropertiesName,
+        quantity: v.orderQuantity
+      }
+    })
     console.log(skus)
-    // const
-    points.start = [e.x, e.y]
-    console.log(points)
-    // 先触发加购动画
-    await throwed(skus[0].productSkuImg || product.productMainImg)
+    // 触发加购动画
+    await throwed(skus[0].photoUrl, [e.x, e.y])
     //
-    const add = skus
-    // sendMessage('updateSheet', { add })
+    sendMessage('updateSheet', { add: skus })
     msg.success('写入成功')
   })
 

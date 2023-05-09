@@ -3,11 +3,12 @@
 @use "./antd.scss";
 @use "./antd-cover.scss";
 
-$fontfamily: "PingFangSC", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+$fontfamily: "PingFangSC-Medium", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
 
 $b1: #232323;
 $b2: #666;
 $b3: #898989;
+$b4: #565656;
 $g1: #008060;
 $g2: #e7f7f1;
 $g3: #ecf9f4;
@@ -22,6 +23,7 @@ $bl1: #007aff;
   --b1: #{$b1};
   --b2: #{$b2};
   --b3: #{$b3};
+  --b4: #{$b4};
   --g1: #{$g1};
   --g2: #{$g2};
   --g3: #{$g3};

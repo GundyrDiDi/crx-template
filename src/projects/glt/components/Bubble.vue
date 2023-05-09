@@ -1,9 +1,10 @@
 <template>
-  <Bubble v-if="plat.showBubble()" :can-drag="canDrag" :ref="(v: any) => bubbleDom = v?.$el">
+  <Bubble v-if="plat.showBubble()" :can-drag="canDrag">
     <template #default="{ isDragging }">
       <div class="sniff-ext-bubble" flex="col colend">
         <div ref="icon" flex="cen ter" cr-pointer @click="isDragging || handleClick()">
-          <img class="sniff-ext-bubble-logo" shadow src="@/assets/images/logo2.png" alt="" />
+          <img :ref="(v: any) => bubbleDom = v" :class="{ droping }" class="sniff-ext-bubble-logo" shadow
+            src="@/assets/images/logo2.png" alt="" />
         </div>
         <div v-if="userData.token" v-show="delayC" class="abs sniff-ext-bubble-box" of-hidden>
           <div :class="{ expand: delayE }" class="sniff-ext-bubble-content" shadow of-hidden>
@@ -17,13 +18,15 @@
               <SearchBar>
                 <SheetConfig />
               </SearchBar>
-              <div style="height: 1px;background: #F4F5F8;margin:0"></div>
-              <div align="c" style="margin:6px;">
-                <span cr-pointer style="color:var(--bl1)" @click="expand = !expand">
-                  {{ t('关闭') }}
-                  <svg-icon name="展开" style="transform: translate(-3px,-1px) rotate(-90deg);"></svg-icon>
-                </span>
-              </div>
+              <SkuList />
+            </div>
+            <div style="height: 1px;background: #F4F5F8;margin:0"></div>
+            <SheetLink style="padding:13px 10px;background:#fdfdfd;" />
+            <div align="c" style="padding:6px 10px;background:#fdfdfd;">
+              <span cr-pointer style="color:var(--bl1)" @click="expand = !expand">
+                {{ t('关闭') }}
+                <svg-icon name="展开" style="transform: translate(-3px,-1px) rotate(-90deg);"></svg-icon>
+              </span>
             </div>
           </div>
         </div>
@@ -39,7 +42,8 @@ import { aRef } from '@/hooks/useExt'
 import useAuth from '@/store/useAuth'
 import useLogin from '@/store/useLogin'
 import SheetConfig from './SheetConfig.vue'
-import { bubbleDom } from '@/hooks/useParabola'
+import SheetLink from './SheetLink.vue'
+import { bubbleDom, droping } from '@/hooks/useParabola'
 
 const { signout } = useLogin()
 const auth = useAuth()
@@ -64,6 +68,11 @@ const canDrag = (e?: PointerEvent) => e?.target === icon.value
     width: 58px;
     border-radius: 50%;
     pointer-events: none;
+    transition: all .1s ease-out;
+
+    &.droping {
+      transform: translateY(4px);
+    }
   }
 
   &-box {
@@ -87,6 +96,7 @@ const canDrag = (e?: PointerEvent) => e?.target === icon.value
     background: #fbfbfb url('~@/assets/images/bubble_bg.png') no-repeat;
     background-size: contain;
     min-height: 110px;
+    color: var(--b4);
 
     >* {
       margin: 10px 10px 0 10px;

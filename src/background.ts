@@ -14,8 +14,11 @@ chrome.runtime.onMessage.addListener((req: SData, sender, sendResponse) => {
           return { data: res }
         }
       })
+      fallback.clear(cmd)
       sendResponse(result)
     } catch (err) {
+      await fallback.run(cmd)
+      console.log(err, req)
       sendResponse({ req, err: err instanceof Error ? err.message : err })
     }
   }
@@ -118,6 +121,7 @@ const dispatch: Record<string, pfn> = {
   // 更新谷歌表
   async updateSheet ({ add, del }:{loop?:boolean, add?:obj[], del?:obj} = {}) {
     await write({ waiting: true })
+    fallback('updateSheet', () => write({ waiting: false }))
     const [googleSheetLangCode, googleUrl] = await this.read(['googleSheetLangCode', 'googleUrl'])
     const thMap = {
       time: 'Date',
@@ -145,14 +149,14 @@ const dispatch: Record<string, pfn> = {
       write({ sheetSkus: [] })
     } else {
       if (add) {
-        const res = await http('postGoogleSheet', {
+        const res = await http('addSheetSku', {
           googleUrl,
           langCode: googleSheetLangCode,
           data: setProps(add)
         })
         console.log(res)
       } else if (del) {
-        const res = await http('deleteGoogleSheet', {
+        const res = await http('getSheetSkus', {
           googleUrl,
           langCode: googleSheetLangCode,
           // ...delItem,
@@ -160,7 +164,7 @@ const dispatch: Record<string, pfn> = {
         })
         console.log(res)
       } else {
-        const res = await http<obj[]>('getGoogleSheet', {
+        const res = await http<obj[]>('getSheetSkus', {
           googleUrl,
           langCode: googleSheetLangCode,
           googleHeaderData
@@ -171,6 +175,20 @@ const dispatch: Record<string, pfn> = {
     await write({ waiting: false })
   }
 }
+
+const dep:obj<fn[]> = Object.keys(dispatch).reduce((dep:obj, v) => {
+  dep[v] = []
+  return dep
+}, {})
+/**
+ * 发生错误执行
+ * @param fn
+ */
+const fallback = (cmd:keyof typeof dispatch, fn:fn) => {
+  dep[cmd].push(fn)
+}
+fallback.run = (cmd:string) => Promise.all(dep[cmd]?.map(fn => fn()) ?? [])
+fallback.clear = (cmd:string) => (dep[cmd].length = 0)
 
 setInterval(
   dispatch.canFreeSearch,
