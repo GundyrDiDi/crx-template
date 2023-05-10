@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { sendMessage } from '@/hooks/useExt'
-import { Ref, ref } from 'vue'
+import { Ref, ref, watch } from 'vue'
 import { ENV, CKB } from '@/hooks/const'
 import { startLoop } from '@/hooks/utils'
 import useFlow from './useFlow'
@@ -79,6 +79,11 @@ export default defineStore('auth', () => {
   const hasAccess = (l: number) => {
     return userData.value.token && level.value >= l
   }
+
+  /** 向外暴露出userData变化的监听 */
+  const onUserChange = (fn:fn) => {
+    watch(() => userData.value.token, fn)
+  }
   return {
     userData,
     level,
@@ -90,6 +95,7 @@ export default defineStore('auth', () => {
       isLogin,
       useCount
     },
-    joinMember
+    joinMember,
+    onUserChange
   }
 })

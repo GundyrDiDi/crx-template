@@ -9,6 +9,8 @@
           @click="isDragging || handleClick()"
         >
           <img
+            :ref="(v: any) => bubbleDom = v"
+            :class="{ droping }"
             class="sniff-ext-bubble-logo"
             shadow
             src="@/assets/images/logo1.png"
@@ -62,6 +64,7 @@ import usePlat from '@/store/usePlat'
 import { ref, computed } from 'vue'
 import { aRef } from '@/hooks/useExt'
 import useAuth from '@/store/useAuth'
+import { bubbleDom, droping } from '@/hooks/useParabola'
 
 const auth = useAuth()
 const userData = computed(() => auth.userData)
@@ -83,6 +86,10 @@ const canDrag = (e?: PointerEvent) => e?.target === icon.value
     width: 58px;
     border-radius: 50%;
     pointer-events: none;
+
+    &.droping {
+      transform: translateY(4px);
+    }
   }
 
   &-box {

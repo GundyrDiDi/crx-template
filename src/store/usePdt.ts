@@ -60,7 +60,7 @@ export default defineStore('product', () => {
    * 1688
    */
   const parse1688 = async () => {
-    const { skuModel, tempModel, images, orderParamModel } = await getSrcWin<obj>('_GLOBALDATA')
+    const { skuModel, tempModel, images, orderParamModel } = await getSrcWin<obj>('__GLOBAL_DATA')
     product.productCode = `${pkey}-${tempModel.offerId}`
     product.productName = document.title
     product.productCate = tempModel.postCategoryId
@@ -111,7 +111,7 @@ export default defineStore('product', () => {
         }
       })
     }
-    // console.log(skuMap)
+    console.log(skuMap)
   }
   // 1688需要点击sku弹窗
   const trigger1688 = (close?: boolean) => {

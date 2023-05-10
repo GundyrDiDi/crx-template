@@ -1,6 +1,6 @@
 import { read, write } from './workers/store'
 import http from './workers/http'
-import { ENV } from './hooks/const'
+import { ENV, GLT, CKB } from './hooks/const'
 
 // 注意 V2版本的回调函数不可为异步函数，且必须返回true才会保持通信
 chrome.runtime.onMessage.addListener((req: SData, sender, sendResponse) => {
@@ -71,7 +71,6 @@ const dispatch: Record<string, pfn> = {
   },
   // 更新用户信息
   async updateUser () {
-    console.log(await read('userData'))
     fallback('updateUser', () => write({ userData: {} }))
     const res = await http<Store['userData']>('getUser')
     console.log(res)
@@ -118,10 +117,12 @@ const dispatch: Record<string, pfn> = {
       text: word
     })
   },
-  // 更新谷歌表
+  /**
+   * 更新谷歌表
+   * @param param0
+   * @returns
+   */
   async updateSheet ({ add, del }: { add?: obj[], del?: obj } = {}) {
-    await write({ waiting: true })
-    fallback('updateSheet', () => write({ waiting: false }))
     const [googleSheetLangCode, googleUrl] = await this.read(['googleSheetLangCode', 'googleUrl'])
     const thMap = {
       time: 'Date',
@@ -145,34 +146,33 @@ const dispatch: Record<string, pfn> = {
         return o
       })
     }
-    if (!googleUrl) {
-      write({ sheetSkus: [] })
-    } else {
+    let res
+    if (googleUrl) {
       if (add) {
-        const res = await http('addSheetSku', {
+        res = await http('addSheetSku', {
           googleUrl,
           langCode: googleSheetLangCode,
           data: setProps(add)
         })
-        console.log(res)
       } else if (del) {
-        const res = await http('getSheetSkus', {
+        res = await http('delSheetSku', {
           googleUrl,
           langCode: googleSheetLangCode,
-          // ...delItem,
+          ...del,
           googleHeaderData
         })
-        console.log(res)
       } else {
-        const res = await http<obj[]>('getSheetSkus', {
+        res = await http<obj[]>('getSheetSkus', {
           googleUrl,
           langCode: googleSheetLangCode,
           googleHeaderData
         })
-        write({ sheetSkus: setProps(res, true) })
+        write({ sheetSkus: setProps(res, true).reverse() })
       }
+    } else {
+      write({ sheetSkus: [] })
     }
-    await write({ waiting: false })
+    return res
   }
 }
 
@@ -194,7 +194,12 @@ fallback.clear = (cmd: string) => (dep[cmd].length = 0)
 
 setInterval(
   dispatch.canFreeSearch,
-  1000 * 10 * 60
+  10 * 60 * 1000
 )
 
-dispatch.updateSheet({ loop: true })
+if (ENV.pjt === GLT) {
+  setInterval(
+    dispatch.updateSheet,
+    10 * 60 * 1000
+  )
+}

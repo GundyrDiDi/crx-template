@@ -37,13 +37,15 @@ export const sendMessage = <T>(cmd: string, data?: unknown) => {
 }
 
 /**
+ * 对于background中的 store 做长链接，保持一定间隔获取最新数据，且当当前页改变时同步更新
  *
+ * 建立一个时间队列，将相同间隔的链接放入一个循环内
  * @param key
  * @param dft 默认值
  * @param interval 间隔时间
  * @returns
  */
-export const connect = <T>(key: string, dft: T, interval = 2000) => {
+export const connect = <T>(key: string, dft: T, interval = 1000) => {
   const v = ref<T>(dft)
   const fn = async () => {
     const res = await sendMessage<T>('read', key)
@@ -54,8 +56,13 @@ export const connect = <T>(key: string, dft: T, interval = 2000) => {
   observe(key, fn)
   return v
 }
+const addLoop = (fn:fn, interval:number) => {
+  if (!timeDep[interval]) {
 
-const observer:obj<fn[]> = {}
+  }
+}
+const timeDep:obj<fn[]> = {}
+
 /**
  *
  * @param data
@@ -82,6 +89,7 @@ export const mutate = (cmd:string, data?:unknown) => {
     })
   }
 }
+const observer:obj<fn[]> = {}
 
 /**
  * content-script 获取内部环境的全局对象

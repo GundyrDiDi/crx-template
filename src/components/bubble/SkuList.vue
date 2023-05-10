@@ -1,16 +1,21 @@
 <template>
   <a-spin :spinning="sheet.waiting">
     <div class="sniff-ext-skulist" style="overflow-x: hidden" of-auto>
-      <transition-group v-if="sheet.googleUrl" tag="div" name="list">
+      <transition-group
+        v-if="sheet.googleUrl"
+        tag="div"
+        name="list"
+        class="rel"
+      >
         <div
-          v-for="(v, i) in s"
+          v-for="(v, i) in sheet.sheetSkus"
           :key="v.time + v.productSpecification"
           flex
           class="rel sniff-ext-skulist-item"
         >
           <div>
             <a :href="v.photoUrl" target="_blank">
-              <img class="sku-photo" :src="v.photoUrl" alt="" />
+              <img lazy class="sku-photo" :src="v.photoUrl" alt="" />
             </a>
             <div style="margin-top: 13px">×{{ v.quantity }}</div>
           </div>
@@ -28,7 +33,7 @@
             </span>
           </div>
           <div class="abs sniff-ext-skulist-drawer">
-            <div class="wrap" flex="cen ter" @click="delSku(i)">
+            <div class="wrap" flex="cen ter" @click="sheet.delSku(i)">
               <span>
                 <svg-icon name="删除"></svg-icon>
               </span>
@@ -46,23 +51,9 @@
 </template>
 <script lang="ts" setup>
 import useSheet from '@/store/useSheet'
-import { computed, reactive } from 'vue'
 import { t } from '@/i18n'
 
 const sheet = useSheet()
-const sheetSkus = computed(() => sheet.sheetSkus)
-const s = reactive(
-  Array.from({ length: 6 }, (v, i) => {
-    return {
-      time: i,
-      photoUrl: '',
-      quantity: 1,
-      productUrl: '',
-      productName: Date.now(),
-      productSpecification: Math.random() + '' + Math.random()
-    }
-  })
-)
 
 const pre = t('绑定X后即可选购商品').replace(
   'X',
@@ -70,12 +61,6 @@ const pre = t('绑定X后即可选购商品').replace(
   style="color:#f96113;font-weight: 500;"
   >${t('谷歌表')}</span>`
 )
-
-const delSku = (i: number) => {
-  //
-  const t = s[i]
-  s.splice(i, 1)
-}
 </script>
 <style lang="scss" scoped>
 .ant-spin-nested-loading {
@@ -156,7 +141,7 @@ const delSku = (i: number) => {
 .list-enter-active,
 .list-leave-active,
 .list-move {
-  transition: all 0.4s;
+  transition: all 0.7s;
 }
 
 .arrow-d {
@@ -164,6 +149,7 @@ const delSku = (i: number) => {
   right: 14px;
   top: -24px;
   animation: sniffzoom 1s infinite;
+  pointer-events: none;
 }
 
 @keyframes sniffzoom {

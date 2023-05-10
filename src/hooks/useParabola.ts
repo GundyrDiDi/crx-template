@@ -70,7 +70,6 @@ const step = 60
  * @returns
  */
 export const throwed = (src:string, start:number[]) => {
-  console.log(bubbleDom)
   const { left, top, height, width } = bubbleDom.value.getBoundingClientRect()
   points.start = start
   points.end = [left + width / 2, top + height / 2]

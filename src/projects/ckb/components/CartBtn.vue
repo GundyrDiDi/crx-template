@@ -1,8 +1,17 @@
-<template >
+<template>
   <CartBtn class="sniff-ext-cart-btn" :id="'sniff-ext-' + plat">
-    <a href="#" @click.prevent="canBuy && wrap()" class="rel" :class="{ loading, disabled: !canBuy }">
-      <img v-show="canBuy" class="abs sniff-ext-cart-icon" src="@/assets/images/logo1.png" />
-      <span>{{ canBuy ? t('添加商品') : t('不支持采购') }}</span>
+    <a
+      href="#"
+      @click.prevent="pdt.canBuy && wrap()"
+      class="rel"
+      :class="{ loading, disabled: !pdt.canBuy }"
+    >
+      <img
+        v-show="pdt.canBuy"
+        class="abs sniff-ext-cart-icon"
+        src="@/assets/images/logo1.png"
+      />
+      <span>{{ pdt.canBuy ? t('添加商品') : t('不支持采购') }}</span>
     </a>
   </CartBtn>
 </template>
@@ -15,7 +24,6 @@ import usePlat from '@/store/usePlat'
 const { plat } = usePlat()
 const { flow } = useAuth()
 const pdt = usePdt()
-const canBuy = pdt.canBuy
 const [wrap, loading] = useLoading(flow.isLogin.add(pdt.addCart))
 </script>
 <style lang="scss" scoped>
@@ -24,7 +32,7 @@ const [wrap, loading] = useLoading(flow.isLogin.add(pdt.addCart))
   clear: both;
   display: block;
 
-  >a {
+  > a {
     float: left !important;
     display: flex !important;
     justify-content: center !important;
@@ -36,7 +44,7 @@ const [wrap, loading] = useLoading(flow.isLogin.add(pdt.addCart))
     border: 1px solid var(--g1) !important;
     overflow: hidden !important;
     text-decoration: none !important;
-    transition: all .1s;
+    transition: all 0.1s;
 
     .sniff-ext-cart-icon {
       top: 2px;
@@ -44,7 +52,7 @@ const [wrap, loading] = useLoading(flow.isLogin.add(pdt.addCart))
       height: 34px;
     }
 
-    >span {
+    > span {
       font-size: 16px;
       color: var(--g1);
     }
@@ -63,14 +71,14 @@ const [wrap, loading] = useLoading(flow.isLogin.add(pdt.addCart))
     &.disabled {
       color: #eee !important;
       cursor: not-allowed !important;
-      border: 1px solid #E8E8E8 !important;
+      border: 1px solid #e8e8e8 !important;
 
       .sniff-ext-cart-icon {
         filter: grayscale(1);
-        opacity: .5;
+        opacity: 0.5;
       }
 
-      >span {
+      > span {
         color: #898989;
       }
     }
