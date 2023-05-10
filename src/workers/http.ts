@@ -12,10 +12,10 @@ const baseUrl = ENV.url
 
 const http = async (url: string, options: RequestInit, other?:string) => {
   const { token, curShop } = await read('userData')
-  if (token && curShop) {
+  if (token) {
     options.headers = {
       'X-AuthToken': token,
-      'X-AuthShopId': curShop,
+      'X-AuthShopId': curShop ?? '',
       ...options.headers
     }
   }
@@ -26,13 +26,13 @@ const http = async (url: string, options: RequestInit, other?:string) => {
     }
   }
   return fetch((other || baseUrl) + url, options).then(res => res.json()).then(res => {
-    const { code } = res
+    const { code, msg, error } = res
     if (code === '24010063' || code === '24010062' || code === '10000000') {
       write({ userData: {} })
     }
     return code === '0'
-      ? res.data
-      : Promise.reject(new Error(code))
+      ? (res.data ?? true)
+      : Promise.reject(new Error(code + '#' + (msg ?? error) + '#' + JSON.stringify(options)))
   })
 }
 

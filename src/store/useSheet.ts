@@ -19,8 +19,7 @@ export default defineStore('sheet', () => {
       return
     }
     const customerId = await sendMessage('read', 'customerId')
-    const res = true // await sendMessage('http', ['setGoogleSheet', { googleUrl, customerId }])
-    console.log(res)
+    const res = await sendMessage('http', ['setGoogleSheet', { googleUrl, customerId }])
     if (res) {
       await sendMessage('write', { googleUrl })
       // 替换后更新谷歌表

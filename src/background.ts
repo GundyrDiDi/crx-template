@@ -1,6 +1,6 @@
 import { read, write } from './workers/store'
 import http from './workers/http'
-import { sendMessage } from './hooks/useExt'
+import { ENV } from './hooks/const'
 
 // 注意 V2版本的回调函数不可为异步函数，且必须返回true才会保持通信
 chrome.runtime.onMessage.addListener((req: SData, sender, sendResponse) => {
@@ -18,7 +18,6 @@ chrome.runtime.onMessage.addListener((req: SData, sender, sendResponse) => {
       sendResponse(result)
     } catch (err) {
       await fallback.run(cmd)
-      console.log(err, req)
       sendResponse({ req, err: err instanceof Error ? err.message : err })
     }
   }
@@ -72,12 +71,13 @@ const dispatch: Record<string, pfn> = {
   },
   // 更新用户信息
   async updateUser () {
-    write({ userData: {} })
+    console.log(await read('userData'))
+    fallback('updateUser', () => write({ userData: {} }))
     const res = await http<Store['userData']>('getUser')
-    write({ userData: res })
+    console.log(res)
     res.customerId && write({ customerId: res.customerId })
-    res.googleUrl && write({ googleUrl: res.googleUrl ?? '' })
     res.langcode && write({ googleSheetLangCode: res.langcode })
+    write({ googleUrl: res.googleUrl ?? '' })
     return res
   },
   // 保存用户信息
@@ -119,7 +119,7 @@ const dispatch: Record<string, pfn> = {
     })
   },
   // 更新谷歌表
-  async updateSheet ({ add, del }:{loop?:boolean, add?:obj[], del?:obj} = {}) {
+  async updateSheet ({ add, del }: { add?: obj[], del?: obj } = {}) {
     await write({ waiting: true })
     fallback('updateSheet', () => write({ waiting: false }))
     const [googleSheetLangCode, googleUrl] = await this.read(['googleSheetLangCode', 'googleUrl'])
@@ -132,9 +132,9 @@ const dispatch: Record<string, pfn> = {
       quantity: 'Quantity'
     }
     const googleHeaderData = Object.values(thMap).join(',')
-    const setProps = (data: obj[], forward?:boolean) => {
+    const setProps = (data: obj[], forward?: boolean) => {
       return data.map(v => {
-        const o:obj = {}
+        const o: obj = {}
         Object.entries(thMap).forEach(([key1, key2]) => {
           if (forward) {
             o[key1] = v[key2]
@@ -176,7 +176,7 @@ const dispatch: Record<string, pfn> = {
   }
 }
 
-const dep:obj<fn[]> = Object.keys(dispatch).reduce((dep:obj, v) => {
+const dep: obj<fn[]> = Object.keys(dispatch).reduce((dep: obj, v) => {
   dep[v] = []
   return dep
 }, {})
@@ -184,13 +184,17 @@ const dep:obj<fn[]> = Object.keys(dispatch).reduce((dep:obj, v) => {
  * 发生错误执行
  * @param fn
  */
-const fallback = (cmd:keyof typeof dispatch, fn:fn) => {
+const fallback = (cmd: keyof typeof dispatch, fn: fn) => {
   dep[cmd].push(fn)
 }
-fallback.run = (cmd:string) => Promise.all(dep[cmd]?.map(fn => fn()) ?? [])
-fallback.clear = (cmd:string) => (dep[cmd].length = 0)
+fallback.run = (cmd: string) => Promise.all(dep[cmd]?.map(fn => fn()) ?? [])
+fallback.clear = (cmd: string) => (dep[cmd].length = 0)
+
+/**  */
 
 setInterval(
   dispatch.canFreeSearch,
   1000 * 10 * 60
 )
+
+dispatch.updateSheet({ loop: true })

@@ -1,21 +1,29 @@
 <template>
   <a-spin :spinning="sheet.waiting">
-    <div class="sniff-ext-skulist" style="overflow-x: hidden;" of-auto>
+    <div class="sniff-ext-skulist" style="overflow-x: hidden" of-auto>
       <transition-group v-if="sheet.googleUrl" tag="div" name="list">
-        <div v-for="(v, i) in s" :key="v.time + v.productSpecification" flex class="rel sniff-ext-skulist-item">
+        <div
+          v-for="(v, i) in s"
+          :key="v.time + v.productSpecification"
+          flex
+          class="rel sniff-ext-skulist-item"
+        >
           <div>
             <a :href="v.photoUrl" target="_blank">
               <img class="sku-photo" :src="v.photoUrl" alt="" />
             </a>
-            <div style="margin-top:13px">
-              ×{{ v.quantity }}
-            </div>
+            <div style="margin-top: 13px">×{{ v.quantity }}</div>
           </div>
-          <div class="sniff-ext-skulist-desc">
-            <a :href="v.productUrl" target="_blank" class="line--2" style="height:36px;margin-bottom:4px;">
+          <div class="sniff-ext-skulist-desc" flex="col">
+            <a
+              :href="v.productUrl"
+              target="_blank"
+              class="line--2"
+              style="height: 36px; margin-bottom: 4px"
+            >
               {{ v.productName }}
             </a>
-            <span class="sniff-ext-skulist-prop line--only">
+            <span class="sniff-ext-skulist-prop line--1">
               {{ v.productSpecification }}
             </span>
           </div>
@@ -29,9 +37,9 @@
         </div>
       </transition-group>
       <div v-else flex="col ter" class="pa-25">
-        <img src="@/assets/images/占位.png" style="height:120px;" alt="">
+        <img src="@/assets/images/占位.png" style="height: 120px" alt="" />
         <div v-html="pre"></div>
-        <img class="abs arrow-d" src="@/assets/images/拐弯箭头.png" alt="">
+        <img class="abs arrow-d" src="@/assets/images/拐弯箭头.png" alt="" />
       </div>
     </div>
   </a-spin>
@@ -43,28 +51,30 @@ import { t } from '@/i18n'
 
 const sheet = useSheet()
 const sheetSkus = computed(() => sheet.sheetSkus)
-const s = reactive(Array.from({ length: 6 }, (v, i) => {
-  return {
-    time: i,
-    photoUrl: '',
-    quantity: 1,
-    productUrl: '',
-    productName: Date.now(),
-    productSpecification: Math.random()
-  }
-}))
+const s = reactive(
+  Array.from({ length: 6 }, (v, i) => {
+    return {
+      time: i,
+      photoUrl: '',
+      quantity: 1,
+      productUrl: '',
+      productName: Date.now(),
+      productSpecification: Math.random() + '' + Math.random()
+    }
+  })
+)
 
-const pre = t('绑定X后即可选购商品').replace('X', `<span 
+const pre = t('绑定X后即可选购商品').replace(
+  'X',
+  `<span 
   style="color:#f96113;font-weight: 500;"
-  >${t('谷歌表')}</span>`)
+  >${t('谷歌表')}</span>`
+)
 
 const delSku = (i: number) => {
   //
   const t = s[i]
   s.splice(i, 1)
-  setTimeout(() => {
-    s.unshift(t)
-  }, 5000)
 }
 </script>
 <style lang="scss" scoped>
@@ -92,7 +102,7 @@ const delSku = (i: number) => {
       color: inherit !important;
     }
 
-    &:hover .sniff-ext-skulist-drawer>div {
+    &:hover .sniff-ext-skulist-drawer > div {
       opacity: 1;
       transform: translateX(0);
     }
@@ -106,8 +116,8 @@ const delSku = (i: number) => {
   }
 
   &-prop {
-    margin: 12px 0 0 10px;
-    background: #FBFBFB;
+    margin-top: 12px;
+    background: #fbfbfb;
     padding-left: 10px;
     border-radius: 10px;
   }
@@ -118,7 +128,7 @@ const delSku = (i: number) => {
     right: 0px;
     width: 50px;
 
-    >div {
+    > div {
       color: #fff;
       background: rgba(0, 0, 0, 0.8);
       transition: all 0.2s ease-in-out;
@@ -143,20 +153,22 @@ const delSku = (i: number) => {
   transform: translateX(30px) !important;
 }
 
+.list-enter-active,
+.list-leave-active,
 .list-move {
-  transition: transform 5s;
+  transition: all 0.4s;
 }
 
 .arrow-d {
   height: 60px;
   right: 14px;
-  top: 84px;
+  top: -24px;
   animation: sniffzoom 1s infinite;
 }
 
 @keyframes sniffzoom {
   0% {
-    transform: scale(.98) rotate(-5deg);
+    transform: scale(0.98) rotate(-5deg);
   }
 
   50% {
@@ -164,7 +176,7 @@ const delSku = (i: number) => {
   }
 
   100% {
-    transform: scale(.98) rotate(-5deg);
+    transform: scale(0.98) rotate(-5deg);
   }
 }
 </style>

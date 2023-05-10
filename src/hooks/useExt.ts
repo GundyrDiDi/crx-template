@@ -28,7 +28,7 @@ export const sendMessage = <T>(cmd: string, data?: unknown) => {
         resolve()
       } else {
         // 触发observer
-        mutate(cmd, res.data)
+        mutate(cmd, data)
         resolve(res.data)
       }
     })
