@@ -25,6 +25,14 @@
                   :reverse="visible ? true : undefined"
                 ></svg-icon>
               </span>
+              <div class="abs" style="top: -28px; left: 0px" swing>
+                <div class="ant-tooltip-content">
+                  <div class="ant-tooltip-arrow"></div>
+                  <div>
+                    {{ t('谷歌表语言') }}
+                  </div>
+                </div>
+              </div>
             </template>
           </LangBar>
         </a-form-item>
@@ -226,5 +234,14 @@ const toSignin = () => {
   line-height: 18px;
   transform: scaleY(0.95);
   border-right: 1px solid #eee;
+}
+
+.ant-tooltip-content {
+  box-shadow: 0px 3px 6px 0px #e0ebe8;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--g1);
+  background: #fff;
 }
 </style>

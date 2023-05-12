@@ -64,7 +64,7 @@ export default defineStore('login', () => {
   const forgotPwLink = () => ENV.host + '/login/findpwd?lang=' + useLang().langCode
 
   /** 注册弹窗 */
-  const upVisible = ref(false)
+  const upVisible = ref(true)
   const toggle = () => {
     hide()
     setTimeout(() => {
