@@ -81,19 +81,6 @@
             <span class="abs">
               <svg-icon name="验证码"></svg-icon>
             </span>
-            <span class="abs" style="right: 10px; top: 10px">
-              <ant-btn
-                :loading="login.waitCount > 0"
-                @click="login.getEmailCode"
-                style="min-width: 110px; height: 30px; font-size: 14px"
-              >
-                <template v-if="login.waitCount > 0">
-                  {{ t('发送中') }}
-                  ({{ login.waitCount }})
-                </template>
-                <template v-else> {{ t('获取验证码') }} </template>
-              </ant-btn>
-            </span>
           </a-form-item>
         </template>
         <div class="rel" style="z-index: 1">
@@ -106,7 +93,9 @@
             t('忘记密码')
           }}</a>
           <span class="mh-10">|</span>
-          <span cr-handle @click="login.toggle">{{ t('注册会员') }}</span>
+          <span cr-handle @click="login.upVisible = true">{{
+            t('注册会员')
+          }}</span>
         </div>
       </a-form>
     </div>

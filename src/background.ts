@@ -71,22 +71,24 @@ const dispatch: Record<string, pfn> = {
   },
   // 更新用户信息
   async updateUser () {
-    fallback('updateUser', () => write({ userData: {} }))
-    const res = await http<Store['userData']>('getUser')
-    console.log(res)
+    fallback('updateUser', () => write({ token: '', curShop: '', customerId: '' }))
+    const res = await http<Store>('getUser')
     res.customerId && write({ customerId: res.customerId })
-    res.langcode && write({ googleSheetLangCode: res.langcode })
+    res.langcode && write({ langcode: res.langcode })
     write({ googleUrl: res.googleUrl ?? '' })
+    if (ENV === GLT) {
+      write({ memberLevel: 999 })
+    }
     return res
   },
   // 保存用户信息
-  async setUser (data) {
-    await write({ userData: data })
+  async setUser ({ token, curShop, systemSource }:{token:string, curShop:string, systemSource:number}) {
+    await write({ token, curShop, systemSource })
     this.canFreeSearch()
   },
   async canFreeSearch () {
-    const userData = await read('userData')
-    if (!userData.token) return
+    const token = await read('token')
+    if (!token) return
     const res = await http<{ templateLevel: number }>('getUserMember')
     const memberLevel = res.templateLevel
     write({ memberLevel })
@@ -123,7 +125,7 @@ const dispatch: Record<string, pfn> = {
    * @returns
    */
   async updateSheet ({ add, del }: { add?: obj[], del?: obj } = {}) {
-    const [googleSheetLangCode, googleUrl] = await this.read(['googleSheetLangCode', 'googleUrl'])
+    const [googleSheetLangCode, googleUrl] = await this.read(['langcode', 'googleUrl'])
     const thMap = {
       time: 'Date',
       photoUrl: 'Photo Url',

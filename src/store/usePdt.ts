@@ -3,7 +3,7 @@ import { ref, reactive } from 'vue'
 import $ from 'jquery'
 import { PLATS } from '@/hooks/const'
 import { until, anagrams } from '@/hooks/utils'
-import { getSrcWin, $async, sendMessage } from '@/hooks/useExt'
+import { getSrcWin, $async, http } from '@/hooks/useExt'
 import { getUrlParams, historyParams } from '@/hooks/useUrl'
 import md5 from 'md5'
 import { tmGoodsApi } from '@/hooks/useApi'
@@ -163,7 +163,6 @@ export default defineStore('product', () => {
   /**
    * 淘宝
    */
-  const sliceImgUrl = (str?:string) => str?.replace(/_\d+x\d+.*?\..*$/, '')
   const parseTb = async () => {
     product.productCode = `${pkey}-${historyParams.id}`
     const cate = (((await until(() => $('script[exparams]').attr('exparams'))).match(/category=item(.+?)&/) ?? [])[1]).replace(/%.{2}/, '')
@@ -175,6 +174,9 @@ export default defineStore('product', () => {
     product.skuMap = (await getSrcWin<obj>('Hub?.config?.config?.sku?.valItemInfo')).skuMap
     container.value = await $async('.tb-skin')
   }
+  /** 截取图片源地址 */
+  const sliceImgUrl = (str?:string) => str?.replace(/_\d+x\d+.*?\..*$/, '')
+  /** 通过规格组合排列skuList */
   const assemble = (props:(obj<string>[])[]) => {
     return props.reduce<obj[]>((acc, v) => {
       const res:obj[] = []
@@ -182,17 +184,18 @@ export default defineStore('product', () => {
         v.forEach(v3 => {
           res.push({
             value: v2.value.concat(v3.value),
-            propName: v2.propName + ';' + v3.propName,
+            propName: v2.propName.concat(v3.propName),
             img: v2.img ?? v3.img
           })
         })
       })
       return res
-    }, [{ value: [], propName: '' }])
+    }, [{ value: [], propName: [] }])
   }
+  /** 通过 skuList 创建 skuMap */
   const assort = (t:obj[], map:obj<{skuId:string}>, temp:fn = v => v, keyback:fn = skuId => skuId) => {
-    // console.log(t)
-    // console.log(map)
+    console.log(t)
+    console.log(map)
     t.forEach(v => {
       const { value, propName, img } = v
       const keys = anagrams(v.value)
@@ -205,7 +208,7 @@ export default defineStore('product', () => {
           skuMap[keyback(skuId, value, propName)] = {
             decode,
             productSku: md5(decode),
-            productPropertiesName: propName,
+            productPropertiesName: propName.join(';'),
             productSkuImg: img,
             productSellPrice: '0'
           }
@@ -402,7 +405,7 @@ export default defineStore('product', () => {
     if (!cateId) {
       canBuy.value = false
     } else {
-      canBuy.value = await sendMessage('http', ['canBuy', { cate_code: cateId, platform_code: plat }]).then(res => !res)
+      canBuy.value = await http('canBuy', { cate_code: cateId, platform_code: plat }).then(res => !res)
     }
   }
   /**
@@ -442,7 +445,7 @@ export default defineStore('product', () => {
         }
       })
     }
-    return sendMessage('http', ['addCart', data]).then(res => {
+    return http('addCart', data).then(res => {
       console.log(res)
       res === null ? msg.success('添加商品成功') : msg.error('添加商品失败')
     })

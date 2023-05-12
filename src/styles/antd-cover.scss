@@ -30,7 +30,8 @@ body [sniff-ext] {
     z-index: #{$z - 10};
   }
   .ant-modal-content {
-    border-radius: 10px;
+    border-radius: 12px;
+    color: var(--b1);
   }
   .ant-modal-close-x {
     width: 62px;

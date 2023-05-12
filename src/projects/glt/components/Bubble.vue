@@ -6,7 +6,7 @@
           ref="icon"
           flex="cen ter"
           cr-pointer
-          @click="isDragging || handleClick()"
+          @click.self="isDragging || handleClick()"
         >
           <img
             :ref="(v: any) => bubbleDom = v"
@@ -18,7 +18,7 @@
           />
         </div>
         <div
-          v-if="userData.token"
+          v-if="auth.customerId"
           v-show="delayC"
           class="abs sniff-ext-bubble-box"
           of-hidden
@@ -36,7 +36,11 @@
                 alt=""
               />
               <LangBar>
-                <div style="color: var(--bl1)" cr-pointer @click="signout">
+                <div
+                  style="color: var(--bl1)"
+                  cr-pointer
+                  @click="login.outVisible = true"
+                >
                   {{ t('退出登录') }}
                 </div>
               </LangBar>
@@ -66,20 +70,21 @@
       </div>
     </template>
   </Bubble>
+  <Signout />
 </template>
 <script lang="ts" setup>
 import usePlat from '@/store/usePlat'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { aRef } from '@/hooks/useExt'
 import useAuth from '@/store/useAuth'
 import useLogin from '@/store/useLogin'
 import SheetConfig from './SheetConfig.vue'
 import SheetLink from './SheetLink.vue'
+import Signout from './Signout.vue'
 import { bubbleDom, droping } from '@/hooks/useParabola'
 
-const { signout } = useLogin()
+const login = useLogin()
 const auth = useAuth()
-const userData = computed(() => auth.userData)
 const handleClick = auth.flow.isLogin.add(() => (expand.value = !expand.value))
 
 const expand = ref(true)

@@ -25,7 +25,7 @@ export default async (plat: string, isProduct: boolean) => {
   const el = $('<div sniff-ext><div>')
   $('body').append(el)
   const app = createApp(App).use(pinia).use(i18n).use(resolver).use(antd)
-  await useAuth().getUser()
+  await useAuth().init()
   await usePlat().init(plat, isProduct)
   window.__root = app.config.globalProperties.root = el[0]
   app.mount(el[0])

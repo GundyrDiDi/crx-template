@@ -4,7 +4,7 @@
 @use "./antd-cover.scss";
 
 $fontfamily: "PingFangSC-Medium", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-
+$fontfamily_1: "PingFangSC-Regular", "PingFang SC";
 $b1: #232323;
 $b2: #666;
 $b3: #898989;
@@ -20,6 +20,7 @@ $bl1: #007aff;
 
 [sniff-ext] {
   font-family: $fontfamily;
+  --ff1: #{$fontfamily_1};
   --b1: #{$b1};
   --b2: #{$b2};
   --b3: #{$b3};
@@ -235,9 +236,10 @@ $bl1: #007aff;
     cursor: pointer;
   }
 
-  $handle-color: $bl1;
+  $handle-color: $g1;
   [cr-handle] {
     @extend [cr-pointer];
+    color: inherit;
     &:hover {
       color: $handle-color;
     }

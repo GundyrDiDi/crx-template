@@ -1,6 +1,12 @@
 <template>
-  <a-modal v-model:visible="computedVisible" :getContainer="() => root" :footer="null" centered v-bind="$attrs"
-    @cancel="computedVisible = false">
+  <a-modal
+    v-model:visible="computedVisible"
+    :getContainer="() => root"
+    :footer="null"
+    centered
+    v-bind="$attrs"
+    @cancel="computedVisible = false"
+  >
     <slot></slot>
     <template #closeIcon>
       <svg-icon name="关闭"></svg-icon>
@@ -16,4 +22,11 @@ const computedVisible = computed({
   set: (v) => emits('update:visible', v)
 })
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss">
+[sniff-ext] [modal-title] {
+  text-align: center;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+}
+</style>

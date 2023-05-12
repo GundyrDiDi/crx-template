@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-// import { ref } from 'vue'
+import { watch } from 'vue'
 import usePdt from './usePdt'
-import { connect, sendMessage } from '@/hooks/useExt'
+import { connect, sendMessage, read, write, http } from '@/hooks/useExt'
 import { throwed } from '@/hooks/useParabola'
 import { msg } from '@/plugins/ant'
 import useAuth from './useAuth'
@@ -19,12 +19,10 @@ export default defineStore('sheet', () => {
       msg.error('无效内容')
       return
     }
-    const customerId = await sendMessage('read', 'customerId')
-    const res = await sendMessage('http', ['setGoogleSheet', { googleUrl, customerId }])
+    const customerId = await read('customerId')
+    const res = await http('setGoogleSheet', { googleUrl, customerId })
     if (res) {
-      await sendMessage('write', { googleUrl })
-      // 替换后更新谷歌表
-      uptSku()
+      await write({ googleUrl })
       msg.success('绑定成功')
       return true
     } else {
@@ -34,8 +32,11 @@ export default defineStore('sheet', () => {
 
   const { flow, onUserChange } = useAuth()
 
-  onUserChange((v) => {
-    console.log(v)
+  onUserChange(v => {
+    if (!v)write({ googleUrl: '' })
+  })
+  watch(googleUrl, () => {
+    sendMessage('updateSheet')
   })
 
   const hasUrl = flow.isLogin.add(async (ctx, next) => {
@@ -43,18 +44,17 @@ export default defineStore('sheet', () => {
       msg.error('未绑定谷歌表')
     } else {
       waiting.value = true
-      await sendMessage('write', { waiting: true })
+      await write({ waiting: true })
       await next()
       waiting.value = false
-      await sendMessage('write', { waiting: false })
+      await write({ waiting: false })
     }
   })
-  const uptSku = hasUrl.add(() => sendMessage('updateSheet'))
 
   /** 加购时使用 */
   const { matchSku, product } = usePdt()
   const addSku = hasUrl.add(async (ctx, next, e: MouseEvent) => {
-    const skus = matchSku().map((v:Orders[0]) => {
+    const add = matchSku().map((v:Orders[0]) => {
       return {
         time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
         photoUrl: v.productSkuImg || product.productMainImg,
@@ -64,17 +64,17 @@ export default defineStore('sheet', () => {
         quantity: v.orderQuantity
       }
     })
-    if (!skus.length) {
+    if (!add.length) {
       msg.error('未选择商品规格')
       return
     }
     // 触发加购动画
-    await throwed(skus[0].photoUrl, [e.x, e.y])
+    await throwed(add[0].photoUrl, [e.x, e.y])
 
-    const res = await sendMessage('updateSheet', { add: skus })
+    const res = await sendMessage('updateSheet', { add })
     if (res) {
-      sheetSkus.value.unshift(...skus)
-      sendMessage('write', { sheetSkus: sheetSkus.value })
+      sheetSkus.value.unshift(...add)
+      write({ sheetSkus: sheetSkus.value })
       msg.success('写入成功')
     } else {
       msg.success('写入失败')
@@ -92,7 +92,7 @@ export default defineStore('sheet', () => {
     const res = await sendMessage('updateSheet', { del })
     if (res) {
       skus.splice(index, 1)
-      sendMessage('write', { sheetSkus: skus })
+      write({ sheetSkus: skus })
     } else {
       msg.success('删除失败')
     }

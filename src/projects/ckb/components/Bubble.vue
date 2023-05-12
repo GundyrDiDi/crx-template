@@ -6,7 +6,7 @@
           ref="icon"
           flex="cen ter"
           cr-pointer
-          @click="isDragging || handleClick()"
+          @click.self="isDragging || handleClick()"
         >
           <img
             :ref="(v: any) => bubbleDom = v"
@@ -18,7 +18,7 @@
           />
         </div>
         <div
-          v-if="userData.token"
+          v-if="auth.token"
           v-show="delayC"
           class="abs sniff-ext-bubble-box"
           of-hidden
@@ -61,13 +61,12 @@
 </template>
 <script lang="ts" setup>
 import usePlat from '@/store/usePlat'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { aRef } from '@/hooks/useExt'
 import useAuth from '@/store/useAuth'
 import { bubbleDom, droping } from '@/hooks/useParabola'
 
 const auth = useAuth()
-const userData = computed(() => auth.userData)
 const handleClick = auth.flow.isLogin.add(() => (expand.value = !expand.value))
 
 const expand = ref(true)

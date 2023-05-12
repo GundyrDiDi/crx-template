@@ -1,33 +1,26 @@
 import { defineStore } from 'pinia'
-import { sendMessage } from '@/hooks/useExt'
-import { Ref, ref, watch } from 'vue'
+import { sendMessage, connect } from '@/hooks/useExt'
+import { watch } from 'vue'
 import { ENV, CKB } from '@/hooks/const'
-import { startLoop } from '@/hooks/utils'
 import useFlow from './useFlow'
 import { msg } from '@/plugins/ant'
 import useLogin from './useLogin'
+import { wait } from '@/hooks/utils'
 
 export default defineStore('auth', () => {
   const flow = useFlow()
   const login = useLogin()
-  const userData: Ref<obj> = ref({})
-  const level = ref(0)
-  const imageCounts = ref(0)
-  const keywordCounts = ref(0)
-  const getUser = async () => {
-    const vals = await sendMessage<[obj, number, number, number]>(
-      'read', ['userData', 'memberLevel', 'imageCounts', 'keywordCounts']
-    )
-    userData.value = vals ? vals[0] : {}
-    level.value = vals ? vals[1] : 0
-    imageCounts.value = vals ? vals[2] : 0
-    keywordCounts.value = vals ? vals[3] : 0
-  }
-  startLoop(getUser, 2000)
+  const token = connect('token', '')
+  const curShop = connect('curShop', '')
+  const customerId = connect('customerId', '')
+  const systemSource = connect('systemSource', 1)
+  const level = connect('memberLevel', 0)
+  const imageCounts = connect('imageCounts', 0)
+  const keywordCounts = connect('keywordCounts', 0)
 
   flow.define('isLogin', async (ctx, next) => {
-    console.log(userData.value)
-    if (userData.value.token) {
+    console.log(token.value)
+    if (token.value) {
       await next()
     } else {
       if (ENV.pjt === CKB) {
@@ -63,6 +56,7 @@ export default defineStore('auth', () => {
       }
     }
   })
+
   /**
    *
    * @returns
@@ -71,31 +65,36 @@ export default defineStore('auth', () => {
   const useCount = isLogin.add('updateCount')
 
   const joinMember = isLogin.add(() => {
-    const url = ENV.path_vip.replace('{sys}', userData.value.systemSource === 1 ? 'd2c' : 'b2b')
+    const url = ENV.path_vip.replace('{sys}', systemSource.value === 1 ? 'd2c' : 'b2b')
     console.log(url)
     window.open(url)
   })
 
   const hasAccess = (l: number) => {
-    return userData.value.token && level.value >= l
+    return token.value && level.value >= l
   }
 
-  /** 向外暴露出userData变化的监听 */
+  /** 向外暴露出 token 变化的监听 */
   const onUserChange = (fn:fn) => {
-    watch(() => userData.value.token, fn)
+    watch(token, fn)
   }
+
+  // 等待 userData 初始化
+  const init = () => wait()
   return {
-    userData,
+    token,
+    curShop,
+    customerId,
     level,
     imageCounts,
     keywordCounts,
     hasAccess,
-    getUser,
     flow: {
       isLogin,
       useCount
     },
     joinMember,
-    onUserChange
+    onUserChange,
+    init
   }
 })

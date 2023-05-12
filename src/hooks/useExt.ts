@@ -1,6 +1,6 @@
 import $ from 'jquery'
 import { wait, until, startLoop } from './utils'
-import { UnwrapRef, ref, Ref, watch } from 'vue'
+import { UnwrapRef, ref, reactive, Ref, watch } from 'vue'
 import { msg } from '@/plugins/ant'
 import type { Messages } from '@/i18n'
 
@@ -21,8 +21,9 @@ export const sendMessage = <T>(cmd: string, data?: unknown) => {
       if (res?.err) {
         console.error(res)
         const { req, err } = res
-        if (err in ErrorCode) {
-          msg.error(ErrorCode[err])
+        const code = err.split('#')[0]
+        if (code in ErrorCode) {
+          msg.error(ErrorCode[code])
         }
         // todo: 上报错误监控
         resolve()
@@ -36,10 +37,14 @@ export const sendMessage = <T>(cmd: string, data?: unknown) => {
   return p
 }
 
+export const read = <T>(keys:string|string[]) => sendMessage<T>('read', keys)
+export const write = <T>(data?:unknown) => sendMessage<T>('write', data)
+export const http = <T>(api:string, data?:unknown) => sendMessage<T>('http', [api, data])
+
 /**
  * 对于background中的 store 做长链接，保持一定间隔获取最新数据，且当当前页改变时同步更新
  *
- * 建立一个时间队列，将相同间隔的链接放入一个循环内
+ * 建立一个时间队列，将相同间隔的connect放入一个循环内
  * @param key
  * @param dft 默认值
  * @param interval 间隔时间
@@ -48,18 +53,39 @@ export const sendMessage = <T>(cmd: string, data?: unknown) => {
 export const connect = <T>(key: string, dft: T, interval = 1000) => {
   const v = ref<T>(dft)
   const fn = async () => {
-    const res = await sendMessage<T>('read', key)
+    const res = await read<T>(key)
     v.value = (res ?? dft) as UnwrapRef<T>
   }
   fn()
-  startLoop(fn, interval)
+  putLoop(fn, interval)
   observe(key, fn)
   return v
 }
-const addLoop = (fn:fn, interval:number) => {
-  if (!timeDep[interval]) {
 
+export const connectState = <T extends obj>(data:T, interval = 1000) => {
+  const obj = reactive(data)
+  const fn = async () => {
+    const res = await read<(T[keyof T])[]>(Object.keys(obj))
+    if (res) {
+      Object.keys(obj).forEach((k, i) => {
+        // obj[k] = res[i]
+      })
+    }
   }
+  fn()
+  putLoop(fn, interval)
+  // observer(data, fn)
+  return obj
+}
+
+const putLoop = (fn:fn, interval:number) => {
+  if (!timeDep[interval]) {
+    timeDep[interval] = []
+    startLoop(() => {
+      timeDep[interval].forEach(v => v())
+    }, interval)
+  }
+  timeDep[interval].push(fn)
 }
 const timeDep:obj<fn[]> = {}
 
@@ -88,6 +114,7 @@ export const mutate = (cmd:string, data?:unknown) => {
       }
     })
   }
+  // 添加其他规则
 }
 const observer:obj<fn[]> = {}
 

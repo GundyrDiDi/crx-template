@@ -3,8 +3,7 @@
     <slot></slot>
   </a-button>
 </template>
-<script lang="ts" setup>
-</script>
+<script lang="ts" setup></script>
 <style lang="scss" scoped>
 .ant-btn[recover] {
   position: relative;
@@ -20,22 +19,6 @@
     color: #fff;
   }
 
-  &.ant-btn-block:hover:not([disabled]) {
-    &:after {
-      content: "";
-      height: inherit;
-      width: inherit;
-      background: #79BFAE;
-      position: absolute;
-      bottom: -15px;
-      left: 0;
-      z-index: -1;
-      border-radius: inherit;
-      transform: scale(0.8);
-      filter: blur(10px);
-    }
-  }
-
   &:active {
     background: var(--g6);
     color: #fff;
@@ -47,6 +30,33 @@
     background: #f5f5f5;
     text-shadow: none;
     box-shadow: none;
+  }
+
+  &[plain] {
+    color: inherit;
+    background-color: #fff;
+    border: 2px solid #cccccc;
+    &:hover,
+    &:focus {
+      background-color: #fff;
+      color: var(--g1);
+    }
+  }
+
+  &.ant-btn-block:hover:not([disabled]) {
+    &:after {
+      content: '';
+      height: inherit;
+      width: inherit;
+      background: #79bfae;
+      position: absolute;
+      bottom: -15px;
+      left: 0;
+      z-index: -1;
+      border-radius: inherit;
+      transform: scale(0.8);
+      filter: blur(10px);
+    }
   }
 }
 </style>

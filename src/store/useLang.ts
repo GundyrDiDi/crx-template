@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { connect, sendMessage } from '@/hooks/useExt'
+import { connect, write } from '@/hooks/useExt'
 
 export default defineStore('lang', () => {
   const langCode = connect('langCode', 'en')
@@ -9,7 +9,7 @@ export default defineStore('lang', () => {
     { label: 'ภาษาไทย', value: 'th' }
   ]
   const changeLang = (lang:string) => {
-    return sendMessage('write', { langCode: lang })
+    return write({ langCode: lang })
   }
   return {
     langCode,
