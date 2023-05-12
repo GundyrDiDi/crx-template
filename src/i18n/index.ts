@@ -284,6 +284,16 @@ const message = {
     ko: '취소',
     th: 'ยกเลิก'
   },
+  手机号: {
+    en: 'mobile number',
+    ko: '전화 번호',
+    th: 'หมายเลขโทรศัพท์'
+  },
+  '格式不正确，请输入6-20位数字或“-”': {
+    en: 'Incorrect Number format. Please enter 6-20 digits or "-"',
+    ko: '형식이 잘못되었습니다. 6-20자리 숫자 또는 \'-\'를 입력하십시오.',
+    th: 'รูปแบบไม่ถูกต้อง กรุณาใส่ 6-20 หลักหรือ "-"'
+  },
   该用户名已被注册: {
     en: 'Sorry, this has been registered',
     ko: '죄송합니다. 이미 등록된 계정입니다.',

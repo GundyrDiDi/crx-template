@@ -15,16 +15,17 @@
       >
         <div class="mb-20" flex="bwn colend">
           <span style="font-size: 18px; font-weight: 600">
-            {{ enterText[login.enter] }}
+            {{ enterText(login.enter) }}
           </span>
           <span
             style="color: var(--bl1)"
             cr-pointer
             @click="login.enter = reverse[login.enter]"
-            >{{ enterText[reverse[login.enter]] }}</span
+            >{{ enterText(reverse[login.enter]) }}</span
           >
         </div>
         <template v-if="login.enter === 0">
+          <!--  -->
           <a-form-item name="nameOrEmail" key="nameOrEmail">
             <a-input
               v-model:value="loginForm.nameOrEmail"
@@ -35,6 +36,7 @@
               <svg-icon name="账号"></svg-icon>
             </span>
           </a-form-item>
+          <!--  -->
           <a-form-item name="password" key="password">
             <a-input
               :type="ptype ? 'password' : 'text'"
@@ -62,6 +64,7 @@
           </a-form-item>
         </template>
         <template v-else>
+          <!--  -->
           <a-form-item name="customerEmail" key="customerEmail">
             <a-input
               v-model:value="loginForm.customerEmail"
@@ -72,7 +75,8 @@
               <svg-icon name="邮箱"></svg-icon>
             </span>
           </a-form-item>
-          <a-form-item name="nameOrEmail" key="nameOrEmail">
+          <!--  -->
+          <a-form-item name="verificationCode" key="verificationCode">
             <a-input
               v-model:value="loginForm.verificationCode"
               :placeholder="t('请输入验证码')"
@@ -101,7 +105,7 @@
             {{ t('登录') }}
           </ant-btn>
         </div>
-        <div align="r" class="mt-10">
+        <div align="r" class="mt-10" style="color: var(--b4)">
           <a cr-handle :href="login.forgotPwLink()" target="_blank">{{
             t('忘记密码')
           }}</a>

@@ -1,10 +1,10 @@
-import { ref, reactive, Ref } from 'vue'
+import { ref, reactive, Ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { http, sendMessage, write } from '@/hooks/useExt'
 import { msg } from '@/plugins/ant'
 import useLang from './useLang'
-import { t } from '@/i18n'
 import { ENV } from '@/hooks/const'
+import { t } from '@/i18n'
 import md5 from 'md5'
 import { useLocalStorage } from '@vueuse/core'
 
@@ -15,10 +15,7 @@ export default defineStore('login', () => {
   const hide = () => (visible.value = false)
 
   /** 登录方式 */
-  const enterText = [
-    t('账号密码登录'),
-    t('邮箱验证码登录')
-  ]
+  const enterText = (enter: number) => [t('账号密码登录'), t('邮箱验证码登录')][enter]
   const enter = ref(0)
 
   const loginForm = reactive({
@@ -63,17 +60,57 @@ export default defineStore('login', () => {
     outVisible.value = false
   }
 
+  /** 忘记密码 */
   const forgotPwLink = () => ENV.host + '/login/findpwd?lang=' + useLang().langCode
 
   /** 注册弹窗 */
   const upVisible = ref(false)
   const toggle = () => {
     hide()
-    upVisible.value = true
+    setTimeout(() => {
+      upVisible.value = true
+    }, 200)
   }
-  const SUForm = reactive({})
+  const SUForm = reactive({
+    loginName: '',
+    password: '',
+    repassword: '',
+    customerEmail: '',
+    verificationCode: '',
+    customerMobile: '',
+    customerName: '',
+    countryCode: ''
+  })
+  const SURules = reactive({})
 
-  const signup = () => {
+  watch(() => useLang().langCode, v => {
+    const cc:obj = {
+      en: '',
+      ko: '+82',
+      th: '+66'
+    }
+    SUForm.countryCode = cc[v]
+  })
+
+  /** 验证重名 */
+  const checkLoginName = async () => {
+    return await http('checkLoginName', { loginName: SUForm.loginName })
+  }
+
+  /** 验证码接口 */
+  const [waitCnt, getSignupCode] = LimitSend(async () => {
+    const res = await http('getSignupCode', {
+      customerEmail: SUForm.customerEmail,
+      langcode: useLang().langCode
+    })
+    if (res) {
+      msg.success('验证码已发送')
+    }
+    return !!res
+  }, 'SignupByCode')
+
+  /** 注册接口 */
+  const signup = async () => {
     //
   }
 
@@ -89,10 +126,13 @@ export default defineStore('login', () => {
     getEmailCode,
     outVisible,
     signout,
-    upVisible,
     forgotPwLink,
     toggle,
+    upVisible,
     SUForm,
+    SURules,
+    waitCnt,
+    getSignupCode,
     signup
   }
 })
@@ -104,8 +144,8 @@ export default defineStore('login', () => {
  * @param num 限制秒数
  * @returns
  */
-const LimitSend = <T extends unknown[]>(fn:pfn<T, boolean>, local:string, num = 60)
-:[Ref<number>, pfn< T, boolean|undefined>] => {
+const LimitSend = <T extends unknown[]>(fn: pfn<T, boolean>, local: string, num = 60)
+  : [Ref<number>, pfn<T, boolean | undefined>] => {
   const count: any = useLocalStorage(local, 0)
   const dida = () => {
     const timer = setInterval(() => {
@@ -116,8 +156,8 @@ const LimitSend = <T extends unknown[]>(fn:pfn<T, boolean>, local:string, num = 
       }
     }, 1000)
   }
-  if (count.value > 0)dida()
-  const wrap = async (...args:T) => {
+  if (count.value > 0) dida()
+  const wrap = async (...args: T) => {
     if (count.value === 0) {
       count.value = num
       const res = await fn(...args)

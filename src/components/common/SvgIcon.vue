@@ -8,10 +8,10 @@
 // require "svg-sprite-loader"
 // vue.config.js make chain-webpack use the plugin
 import { defineProps } from 'vue'
-const importAll = (requireContext: any) => requireContext.keys().forEach(requireContext)
+const importAll = (requireContext: any) =>
+  requireContext.keys().forEach(requireContext)
 importAll(require.context('@/assets/icons', true, /\.svg$/))
 defineProps(['name'])
-
 </script>
 
 <style lang="scss" scoped>
@@ -21,5 +21,6 @@ defineProps(['name'])
   vertical-align: -0.15em;
   fill: currentColor;
   overflow: hidden;
+  transition: all 0.1s;
 }
 </style>

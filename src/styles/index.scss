@@ -16,6 +16,7 @@ $g4: #d7ebe4;
 $g5: #ddf0e9;
 $g6: #236e5b;
 $g7: #009a73;
+$g8: #f7fcfa;
 $bl1: #007aff;
 
 [sniff-ext] {
@@ -32,6 +33,7 @@ $bl1: #007aff;
   --g5: #{$g5};
   --g6: #{$g6};
   --g7: #{$g7};
+  --g8: #{$g8};
   --bl1: #{$bl1};
 
   * {
@@ -212,7 +214,8 @@ $bl1: #007aff;
   $speed: slow normal fast;
 
   [reverse] {
-    transform: rotate(180deg);
+    // transform: rotate(180deg);
+    transform: scaleY(-1);
   }
 
   [fast] {
@@ -243,5 +246,11 @@ $bl1: #007aff;
     &:hover {
       color: $handle-color;
     }
+  }
+
+  [cr-active] {
+    @extend [cr-pointer];
+    color: $handle-color;
+    font-weight: 600;
   }
 }

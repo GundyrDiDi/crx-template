@@ -1,101 +1,154 @@
 <template>
-  <Modal v-model:visible="login.visible" :width="500">
-    <div style="height: 470px">
-      <LangBar style="color: var(--b4); z-index: 1" class="rel"></LangBar>
-      <div flex="cen ter" class="rel" style="height: 100px; top: -20px">
-        <svg-icon style="font-size: 120px" name="THECKB"></svg-icon>
-      </div>
+  <Modal v-model:visible="login.upVisible" :width="500">
+    <div class="ph-35" of-auto>
+      <div modal-title class="mb-30">{{ t('注册会员') }}</div>
       <a-form
         v-bind="layout"
-        :model="loginForm"
-        :rules="loginRules"
+        :model="SUForm"
+        :rules="SURules"
         :hideRequiredMark="false"
-        class="ph-35"
         recover
+        name="signup"
       >
-        <div class="mb-20" flex="bwn colend">
-          <span style="font-size: 18px; font-weight: 600">
-            {{ enterText[login.enter] }}
+        <!-- 语言 -->
+        <a-form-item>
+          <LangBar :select="true">
+            <template #select="{ visible, value, open }">
+              <a-input readonly :value="value" @click="open()"></a-input>
+              <span class="abs unneed">
+                <svg-icon name="切换语言2"></svg-icon>
+              </span>
+              <span class="abs" right-icon>
+                <svg-icon
+                  style="font-size: 13px"
+                  name="展开箭头"
+                  :reverse="visible ? true : undefined"
+                ></svg-icon>
+              </span>
+            </template>
+          </LangBar>
+        </a-form-item>
+        <!-- 账号 -->
+        <a-form-item name="loginName">
+          <a-input
+            v-model:value="SUForm.loginName"
+            :placeholder="t('请输入账号')"
+          ></a-input>
+          <span class="abs">
+            <svg-icon name="账号"></svg-icon>
           </span>
-          <span
-            style="color: var(--bl1)"
-            cr-pointer
-            @click="login.enter = reverse[login.enter]"
-            >{{ enterText[reverse[login.enter]] }}</span
-          >
-        </div>
-        <template v-if="login.enter === 0">
-          <a-form-item name="nameOrEmail" key="nameOrEmail">
-            <a-input
-              v-model:value="loginForm.nameOrEmail"
-              :placeholder="t('请输入账号')"
-              name="sniff_login_nameOrEmail"
-            ></a-input>
-            <span class="abs">
-              <svg-icon name="账号"></svg-icon>
-            </span>
-          </a-form-item>
-          <a-form-item name="password" key="password">
-            <a-input
-              :type="ptype ? 'password' : 'text'"
-              v-model:value="loginForm.password"
-              :maxLength="32"
-              :placeholder="t('请输入密码')"
-              name="sniff_login_password"
-              @keyup.enter="login.signin"
-            ></a-input>
-            <span class="abs sniff-crx-login-icon">
-              <svg-icon name="密码"></svg-icon>
-            </span>
-            <span
-              class="abs"
+        </a-form-item>
+        <!-- 密码 -->
+        <a-form-item name="password">
+          <a-input
+            :type="ptype ? 'password' : 'text'"
+            v-model:value="SUForm.password"
+            :maxLength="32"
+            :placeholder="t('请输入密码')"
+          ></a-input>
+          <span class="abs">
+            <svg-icon name="密码"></svg-icon>
+          </span>
+          <span class="abs" right-icon>
+            <svg-icon
               @click="ptype = !ptype"
-              style="
-                line-height: 50px;
-                right: 20px;
-                font-size: 20px;
-                cursor: pointer;
-              "
+              :name="ptype ? '闭眼' : '睁眼'"
+            ></svg-icon>
+          </span>
+        </a-form-item>
+        <!-- 确认密码 -->
+        <a-form-item name="repassword">
+          <a-input
+            :type="ptype1 ? 'password' : 'text'"
+            v-model:value="SUForm.repassword"
+            :maxLength="32"
+            :placeholder="t('请再次输入密码')"
+          ></a-input>
+          <span class="abs">
+            <svg-icon name="确认密码"></svg-icon>
+          </span>
+          <span class="abs" right-icon>
+            <svg-icon
+              @click="ptype1 = !ptype1"
+              :name="ptype1 ? '闭眼' : '睁眼'"
+            ></svg-icon>
+          </span>
+        </a-form-item>
+        <!-- 邮箱 -->
+        <a-form-item name="customerEmail" key="customerEmail">
+          <a-input
+            v-model:value="SUForm.customerEmail"
+            :placeholder="t('请输入邮箱')"
+            name="sniff_login_customerEmail"
+          ></a-input>
+          <span class="abs">
+            <svg-icon name="邮箱"></svg-icon>
+          </span>
+        </a-form-item>
+        <!-- 验证码 -->
+        <a-form-item name="nameOrEmail" key="nameOrEmail">
+          <a-input
+            v-model:value="SUForm.verificationCode"
+            :placeholder="t('请输入验证码')"
+            name="sniff_login_verificationCode"
+          ></a-input>
+          <span class="abs">
+            <svg-icon name="验证码"></svg-icon>
+          </span>
+          <span class="abs" style="right: 10px; top: 7px">
+            <ant-btn
+              :loading="login.waitCnt > 0"
+              @click="login.getSignupCode"
+              style="min-width: 110px; height: 30px; font-size: 14px"
             >
-              <svg-icon :name="ptype ? '闭眼' : '睁眼'"></svg-icon>
-            </span>
-          </a-form-item>
-        </template>
-        <template v-else>
-          <a-form-item name="customerEmail" key="customerEmail">
-            <a-input
-              v-model:value="loginForm.customerEmail"
-              :placeholder="t('请输入邮箱')"
-              name="sniff_login_customerEmail"
-            ></a-input>
-            <span class="abs">
-              <svg-icon name="邮箱"></svg-icon>
-            </span>
-          </a-form-item>
-          <a-form-item name="nameOrEmail" key="nameOrEmail">
-            <a-input
-              v-model:value="loginForm.verificationCode"
-              :placeholder="t('请输入验证码')"
-              name="sniff_login_verificationCode"
-            ></a-input>
-            <span class="abs">
-              <svg-icon name="验证码"></svg-icon>
-            </span>
-          </a-form-item>
-        </template>
+              <template v-if="login.waitCnt > 0">
+                {{ t('发送中') }}
+                ({{ login.waitCnt }})
+              </template>
+              <template v-else> {{ t('获取验证码') }} </template>
+            </ant-btn>
+          </span>
+        </a-form-item>
+        <!-- 手机号 -->
+        <a-form-item prop="customerMobile" key="customerMobile">
+          <a-input
+            v-model:value="SUForm.customerMobile"
+            :placeholder="t('手机号')"
+            name="sniff_login_customerMobile"
+            :style="{ paddingLeft: SUForm.countryCode ? '88px' : '' }"
+          ></a-input>
+          <span class="abs sniff-crx-login-icon">
+            <svg-icon name="手机号"></svg-icon>
+          </span>
+          <span class="abs" v-if="SUForm.countryCode" country-code>
+            {{ SUForm.countryCode }}
+          </span>
+        </a-form-item>
+        <!-- 姓名 -->
+        <a-form-item prop="customerName" key="customerName">
+          <a-input
+            v-model:value="SUForm.customerName"
+            :placeholder="t('请输入您的名称')"
+            name="sniff_login_customerName"
+          ></a-input>
+          <span class="abs unneed">
+            <svg-icon name="联系人姓名"></svg-icon>
+          </span>
+        </a-form-item>
+        <!-- 条款  -->
+        <div flex="ter" class="mb-10">
+          <a-checkbox v-model="agreed"></a-checkbox>
+          <span class="ml-5" cr-active :class="{ blink }">
+            {{ t('同意此项条款') }}
+          </span>
+        </div>
         <div class="rel" style="z-index: 1">
-          <ant-btn :loading="loading" @click="signin" block>
-            {{ t('登录') }}
+          <ant-btn :loading="loading" @click="signup" block>
+            {{ t('注册会员') }}
           </ant-btn>
         </div>
-        <div align="r" class="mt-10">
-          <a cr-handle :href="login.forgotPwLink()" target="_blank">{{
-            t('忘记密码')
-          }}</a>
-          <span class="mh-10">|</span>
-          <span cr-handle @click="login.upVisible = true">{{
-            t('注册会员')
-          }}</span>
+        <div align="r" class="mt-10" style="color: var(--b4)">
+          <span cr-handle @click="toSignin">{{ t('已有帐户去登录') }}</span>
         </div>
       </a-form>
     </div>
@@ -106,28 +159,35 @@ import { useLoading } from '@/hooks/utils'
 import useLogin from '@/store/useLogin'
 import { ref } from 'vue'
 const login = useLogin()
-const { loginForm, loginRules, enterText } = login
+const { SUForm, SURules } = login
 const layout = {
   labelCol: { span: 0 },
   wrapperCol: { span: 24 }
 }
-/** 当前enter值取反 */
-const reverse = [1, 0]
 
 const ptype = ref(true)
+const ptype1 = ref(true)
 
-const [signin, loading] = useLoading(login.signin)
+const [signup, loading] = useLoading(login.signup)
+
+const agreed = ref(false)
+const blink = ref(false)
+
+const toSignin = () => {
+  login.upVisible = false
+  setTimeout(login.show, 200)
+}
 </script>
 <style lang="scss" scoped>
 [recover] .ant-form-item {
-  margin-bottom: 48px;
+  margin-bottom: 30px;
 }
 
 [recover] .ant-input {
-  height: 50px;
+  height: 44px;
   background: #fafafa;
   border-radius: 25px;
-  padding-left: 44px;
+  padding-left: 49px;
   border: none !important;
   box-shadow: inset 0px 5px 8px 0px #efefef, inset 0px -2px 1px 0px #ffffff;
 
@@ -138,8 +198,33 @@ const [signin, loading] = useLoading(login.signin)
   + span {
     left: 18px;
     pointer-events: none;
-    line-height: 50px;
-    font-size: 18px;
+    line-height: 44px;
+    font-size: 16px;
+    &:not(.unneed)::after {
+      content: '*';
+      color: inherit;
+      font-weight: 200;
+      display: inline-block;
+      transform: translate(5px, 3px);
+    }
   }
+
+  ~ [right-icon] {
+    right: 20px;
+    font-size: 18px;
+    line-height: 44px;
+    cursor: pointer;
+  }
+}
+
+[country-code] {
+  display: flex;
+  left: 51px;
+  top: 10px;
+  padding: 3px 0;
+  width: 30px;
+  line-height: 18px;
+  transform: scaleY(0.95);
+  border-right: 1px solid #eee;
 }
 </style>
