@@ -6,7 +6,9 @@ import type { Messages } from '@/i18n'
 
 /** 后端返回错误代码，前端显示toast */
 const ErrorCode: obj<keyof Messages> = {
-  noMatch: 'sku'
+  noMatch: 'sku',
+  24010003: 'sku',
+  24010032: '客户不存在'
 }
 
 /**

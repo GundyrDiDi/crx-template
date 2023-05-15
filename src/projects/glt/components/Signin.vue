@@ -6,6 +6,7 @@
         <svg-icon style="font-size: 120px" name="THECKB"></svg-icon>
       </div>
       <a-form
+        ref="form"
         v-bind="layout"
         :model="loginForm"
         :rules="loginRules"
@@ -117,21 +118,34 @@
   </Modal>
 </template>
 <script lang="ts" setup>
+import { ref } from 'vue'
 import { useLoading } from '@/hooks/utils'
 import useLogin from '@/store/useLogin'
-import { ref } from 'vue'
 const login = useLogin()
 const { loginForm, loginRules, enterText } = login
 const layout = {
   labelCol: { span: 0 },
   wrapperCol: { span: 24 }
 }
+
 /** 当前enter值取反 */
 const reverse = [1, 0]
 
 const ptype = ref(true)
 
-const [signin, loading] = useLoading(login.signin)
+const form = ref()
+const [signin, loading] = useLoading(async () => {
+  form.value
+    .validate()
+    .then(() => login.signin())
+    .catch((err: unknown) => {
+      console.log(err)
+    })
+})
+
+const f = (v: unknown) => {
+  console.log(v)
+}
 </script>
 <style lang="scss" scoped>
 [recover] .ant-form-item {

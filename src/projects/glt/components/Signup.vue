@@ -27,7 +27,15 @@
               </span>
               <div class="abs" style="top: -28px; left: 0px" swing>
                 <div class="ant-tooltip-content">
-                  <div class="ant-tooltip-arrow"></div>
+                  <div
+                    class="ant-tooltip-arrow"
+                    style="left: 19px; bottom: -6px"
+                  >
+                    <span
+                      class="ant-popover-arrow-content"
+                      style="transform: rotate(45deg)"
+                    ></span>
+                  </div>
                   <div>
                     {{ t('谷歌表语言') }}
                   </div>
@@ -176,10 +184,18 @@ const layout = {
 const ptype = ref(true)
 const ptype1 = ref(true)
 
-const [signup, loading] = useLoading(login.signup)
-
 const agreed = ref(false)
 const blink = ref(false)
+
+const [signup, loading] = useLoading(async () => {
+  if (!agreed.value) {
+    blink.value = true
+    setTimeout(() => {
+      blink.value = false
+    }, 1200)
+  }
+  return login.signup()
+})
 
 const toSignin = () => {
   login.upVisible = false
@@ -243,5 +259,68 @@ const toSignin = () => {
   font-size: 12px;
   color: var(--g1);
   background: #fff;
+}
+
+[swing] {
+  transform-origin: center center;
+  animation: swing 3s 1s infinite;
+}
+
+@keyframes swing {
+  10% {
+    transform: rotate3d(0, 0, 1, 2deg);
+  }
+
+  20% {
+    transform: rotate3d(0, 0, 1, -2deg);
+  }
+
+  30% {
+    transform: rotate3d(0, 0, 1, 2deg);
+  }
+
+  40% {
+    transform: rotate3d(0, 0, 1, -2deg);
+  }
+
+  50% {
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
+
+  100% {
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
+}
+
+.blink {
+  transition: all 0.2s;
+  animation: blink 0.8s linear 2;
+}
+
+@keyframes blink {
+  0% {
+    color: var(--g1);
+    transform: scale(1);
+  }
+
+  25% {
+    color: #f57322;
+    transform: scale(1.05);
+  }
+
+  50% {
+    color: var(--g1);
+    transform: scale(1);
+  }
+
+  75% {
+    color: #f57322;
+    transform: scale(1.05);
+  }
+
+  100% {
+    color: var(--g1);
+    transform: scale(1);
+  }
 }
 </style>

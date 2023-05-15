@@ -43,7 +43,8 @@
     }
   }
 
-  &.ant-btn-block:hover:not([disabled]) {
+  &.ant-btn-block:hover:not([disabled]),
+  &.ant-btn-block:focus:not([disabled]) &.ant-btn-block:active:not([disabled]) {
     &:after {
       content: '';
       height: inherit;

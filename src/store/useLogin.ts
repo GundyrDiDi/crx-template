@@ -7,10 +7,11 @@ import { ENV } from '@/hooks/const'
 import { t } from '@/i18n'
 import md5 from 'md5'
 import { useLocalStorage } from '@vueuse/core'
+import { useRules } from '@/hooks/useRules'
 
 export default defineStore('login', () => {
   /** 登录弹窗 */
-  const visible = ref(false)
+  const visible = ref(true)
   const show = () => (visible.value = true)
   const hide = () => (visible.value = false)
 
@@ -19,13 +20,18 @@ export default defineStore('login', () => {
   const enter = ref(0)
 
   const loginForm = reactive({
-    nameOrEmail: ENV.NODE_ENV === 'development' ? 'qiaoyi10' : '',
+    nameOrEmail: ENV.NODE_ENV === 'development' ? '' : '',
     password: ENV.NODE_ENV === 'development' ? '111111' : '',
     customerEmail: ENV.NODE_ENV === 'development' ? '1053353746@qq.com' : '',
     verificationCode: ENV.NODE_ENV === 'development' ? '1234' : ''
   })
-
-  const loginRules = reactive({})
+  const loginRules = reactive({
+    nameOrEmail: useRules('noblank'),
+    password: useRules('noblank'),
+    customerEmail: useRules('email'),
+    verificationCode: useRules('plain')
+  })
+  console.log(loginRules)
 
   /** 验证码接口 */
   const [waitCount, getEmailCode] = LimitSend(async () => {
@@ -64,7 +70,7 @@ export default defineStore('login', () => {
   const forgotPwLink = () => ENV.host + '/login/findpwd?lang=' + useLang().langCode
 
   /** 注册弹窗 */
-  const upVisible = ref(true)
+  const upVisible = ref(false)
   const toggle = () => {
     hide()
     setTimeout(() => {
@@ -112,6 +118,24 @@ export default defineStore('login', () => {
   /** 注册接口 */
   const signup = async () => {
     //
+    const data = {
+      ...SUForm,
+      langcode: useLang().langCode,
+      password: md5(SUForm.password)
+    }
+    const token = await http<{uuid:string}>('signup', data).then(res => {
+      if (res && res.uuid) {
+        return http<{token:string}>('setDefault', { uuid: res.uuid, systemSource: 1 })
+          .then((res) => res && res.token)
+      }
+    })
+    if (token) {
+      msg.success('注册成功')
+      write({ token })
+      upVisible.value = false
+      const user = await sendMessage('updateUser')
+      console.log(user)
+    }
   }
 
   return {
