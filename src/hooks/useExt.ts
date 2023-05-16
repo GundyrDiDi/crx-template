@@ -4,11 +4,12 @@ import { UnwrapRef, ref, reactive, Ref, watch } from 'vue'
 import { msg } from '@/plugins/ant'
 import type { Messages } from '@/i18n'
 
-/** 后端返回错误代码，前端显示toast */
+/** 后端返回错误代码，前端显示提示 */
 const ErrorCode: obj<keyof Messages> = {
   noMatch: 'sku',
   24010003: 'sku',
-  24010032: '客户不存在'
+  24010032: '客户不存在',
+  24010028: '邮箱验证码不正确'
 }
 
 /**

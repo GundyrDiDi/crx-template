@@ -25,6 +25,20 @@ const rules = {
     if (!/[\d\w]+\b@([a-zA-ZA-z0-9-]+\.)+[a-z]+/.test(val)) {
       return t('无效邮箱')
     }
+  },
+  password (val:string) {
+    const reg = /^[A-Za-z0-9!@#$%^&*.]{6,32}$/
+    if (!reg.test(val)) {
+      return t('输入的密码格式不正确，请设置X-Y个字符，字母和数字的组合，字母区分大小写').replace(/X-Y/, '6-32')
+    }
+  },
+  phone (val:string) {
+    if (!(val === '-' || /^[\d-]{6,20}$/.test(val))) {
+      return t('格式不正确，请输入6-20位数字或“-”')
+    }
+  },
+  backup (val:string) {
+    //
   }
 }
 

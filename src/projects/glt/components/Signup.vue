@@ -1,8 +1,9 @@
 <template>
   <Modal v-model:visible="login.upVisible" :width="500">
-    <div class="ph-35" of-auto>
+    <div class="ph-35">
       <div modal-title class="mb-30">{{ t('注册会员') }}</div>
       <a-form
+        ref="form"
         v-bind="layout"
         :model="SUForm"
         :rules="SURules"
@@ -61,6 +62,7 @@
             v-model:value="SUForm.password"
             :maxLength="32"
             :placeholder="t('请输入密码')"
+            @blur="form.validate(['repassword'])"
           ></a-input>
           <span class="abs">
             <svg-icon name="密码"></svg-icon>
@@ -79,6 +81,7 @@
             v-model:value="SUForm.repassword"
             :maxLength="32"
             :placeholder="t('请再次输入密码')"
+            @blur="form.validate(['password'])"
           ></a-input>
           <span class="abs">
             <svg-icon name="确认密码"></svg-icon>
@@ -187,6 +190,7 @@ const ptype1 = ref(true)
 const agreed = ref(false)
 const blink = ref(false)
 
+const form = ref()
 const [signup, loading] = useLoading(async () => {
   if (!agreed.value) {
     blink.value = true
@@ -194,7 +198,14 @@ const [signup, loading] = useLoading(async () => {
       blink.value = false
     }, 1200)
   }
-  return login.signup()
+  form.value.validate().then(
+    () => {
+      return login.signup()
+    },
+    () => {
+      //
+    }
+  )
 })
 
 const toSignin = () => {
@@ -209,11 +220,11 @@ const toSignin = () => {
 
 [recover] .ant-input {
   height: 44px;
-  background: #fafafa;
   border-radius: 25px;
   padding-left: 49px;
   border: none !important;
-  box-shadow: inset 0px 5px 8px 0px #efefef, inset 0px -2px 1px 0px #ffffff;
+  background: #fafafa !important;
+  box-shadow: inset 0px 5px 8px 0px #efefef, inset 0px -2px 1px 0px #ffffff !important;
 
   &:focus + span {
     color: var(--g1);

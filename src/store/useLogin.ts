@@ -11,7 +11,7 @@ import { useRules } from '@/hooks/useRules'
 
 export default defineStore('login', () => {
   /** 登录弹窗 */
-  const visible = ref(true)
+  const visible = ref(false)
   const show = () => (visible.value = true)
   const hide = () => (visible.value = false)
 
@@ -25,13 +25,13 @@ export default defineStore('login', () => {
     customerEmail: ENV.NODE_ENV === 'development' ? '1053353746@qq.com' : '',
     verificationCode: ENV.NODE_ENV === 'development' ? '1234' : ''
   })
+
   const loginRules = reactive({
     nameOrEmail: useRules('noblank'),
     password: useRules('noblank'),
     customerEmail: useRules('email'),
     verificationCode: useRules('plain')
   })
-  console.log(loginRules)
 
   /** 验证码接口 */
   const [waitCount, getEmailCode] = LimitSend(async () => {
@@ -87,7 +87,28 @@ export default defineStore('login', () => {
     customerName: '',
     countryCode: ''
   })
-  const SURules = reactive({})
+
+  const SURules = reactive({
+    loginName: useRules(['noblank', async (v:string) => {
+      const notExist = await checkLoginName()
+      if (!notExist) {
+        return Promise.reject(new Error('该用户名已被注册'))
+      }
+    }]),
+    password: useRules(['password', (v:string) => {
+      if (SUForm.password !== SUForm.repassword) {
+        return Promise.reject(new Error('两次密码不一致'))
+      }
+    }]),
+    repassword: useRules(['password', (v:string) => {
+      if (SUForm.password !== SUForm.repassword) {
+        return Promise.reject(new Error('两次密码不一致'))
+      }
+    }]),
+    customerEmail: useRules('email'),
+    verificationCode: useRules('plain'),
+    customerMobile: useRules('phone')
+  })
 
   watch(() => useLang().langCode, v => {
     const cc:obj = {

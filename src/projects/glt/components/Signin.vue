@@ -142,10 +142,6 @@ const [signin, loading] = useLoading(async () => {
       console.log(err)
     })
 })
-
-const f = (v: unknown) => {
-  console.log(v)
-}
 </script>
 <style lang="scss" scoped>
 [recover] .ant-form-item {
@@ -154,11 +150,11 @@ const f = (v: unknown) => {
 
 [recover] .ant-input {
   height: 50px;
-  background: #fafafa;
   border-radius: 25px;
   padding-left: 44px;
   border: none !important;
-  box-shadow: inset 0px 5px 8px 0px #efefef, inset 0px -2px 1px 0px #ffffff;
+  background: #fafafa !important;
+  box-shadow: inset 0px 5px 8px 0px #efefef, inset 0px -2px 1px 0px #ffffff !important;
 
   &:focus + span {
     color: var(--g1);
