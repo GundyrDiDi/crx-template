@@ -25,6 +25,7 @@
         "https://*.11st.co.kr/*",
         "https://s.theckb.com/*",
         "https://cdn-test.theckb.com/*",
+        "https://test*-s.theckb.com/*",
         "https://productplugin.theckb.com/*",
         "https://*.png/*",
         "https://*.jpg/*",

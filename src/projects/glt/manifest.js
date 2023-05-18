@@ -38,7 +38,7 @@ module.exports = {
     }
   },
   v3: {
-    version: '6.0.0',
+    version: '5.7.0',
     manifest_version: 3,
     ...common2,
     background: {
