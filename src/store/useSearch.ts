@@ -96,7 +96,7 @@ export default defineStore('search', () => {
     console.log(w)
     // 将中文转为gb内码
     const s = plat === '1688' ? '%' + encodeGbk(w).join('%') : w
-    window.open(hostForSrch[name] + s)
+    window.open(hostForSrch[plat] + s)
     return true
   }
   return {
