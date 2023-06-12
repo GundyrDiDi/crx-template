@@ -65,21 +65,21 @@ export const connect = <T>(key: string, dft: T, interval = 1000) => {
   return v
 }
 
-export const connectState = <T extends obj>(data:T, interval = 1000) => {
-  const obj = reactive(data)
-  const fn = async () => {
-    const res = await read<(T[keyof T])[]>(Object.keys(obj))
-    if (res) {
-      Object.keys(obj).forEach((k, i) => {
-        // obj[k] = res[i]
-      })
-    }
-  }
-  fn()
-  putLoop(fn, interval)
-  // observer(data, fn)
-  return obj
-}
+// export const connectState = <T extends obj>(data:T, interval = 1000) => {
+//   const obj = reactive(data)
+//   const fn = async () => {
+//     const res = await read<(T[keyof T])[]>(Object.keys(obj))
+//     if (res) {
+//       Object.keys(obj).forEach((k, i) => {
+//         // obj[k] = res[i]
+//       })
+//     }
+//   }
+//   fn()
+//   putLoop(fn, interval)
+//   // observer(data, fn)
+//   return obj
+// }
 
 const putLoop = (fn:fn, interval:number) => {
   if (!timeDep[interval]) {

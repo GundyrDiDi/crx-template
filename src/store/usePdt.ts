@@ -54,7 +54,7 @@ export default defineStore('product', () => {
   const container = ref<JQuery>()
 
   let plat: string
-  let pkey: string
+  let pkey: 'AM' | 'TB' | 'TM'
 
   /**
    * 1688
@@ -351,6 +351,9 @@ export default defineStore('product', () => {
       }
     }
   }
+  /**
+   * exec
+   */
   const exec:obj<fn> = {
     parse: () => null,
     createSku: () => null,

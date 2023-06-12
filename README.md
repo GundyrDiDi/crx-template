@@ -1,4 +1,4 @@
-引入typescript就是为了有类型组织代码和静态检查开发起来会更爽的，结果发现默认情况下ts对于chrome extension的api识别不了，需要引入另外的类型库：
+引入typescript就是为了有类型组织代码和静态检查开发起来会更舒适的，结果发现默认情况下ts对于chrome extension的api识别不了，需要引入另外的类型库：
 
 https://www.npmjs.com/package/@types/chrome
 

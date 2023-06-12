@@ -183,7 +183,7 @@ const layout = {
   labelCol: { span: 0 },
   wrapperCol: { span: 24 }
 }
-
+// 显示密码
 const ptype = ref(true)
 const ptype1 = ref(true)
 
@@ -192,6 +192,7 @@ const blink = ref(false)
 
 const form = ref()
 const [signup, loading] = useLoading(async () => {
+  // 未同意条款展示动画
   if (!agreed.value) {
     blink.value = true
     setTimeout(() => {
